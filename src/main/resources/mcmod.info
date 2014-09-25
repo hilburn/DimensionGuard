@@ -7,9 +7,7 @@
 	"mcversion": "${mcversion}",
     "url": "",
     "updateUrl": "",
-    "authors": [
-      "hilburn"
-    ],
+    "authorList": ["hilburn"],
     "credits": "",
     "logoFile": "",
     "screenshots": [],

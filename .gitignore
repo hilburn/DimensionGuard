@@ -1,5 +1,6 @@
 *.msp
 *.class
+/asm/
 /eclipse/
 /.gradle/
 /.metadata/
