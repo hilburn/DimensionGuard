@@ -8,7 +8,12 @@ import net.minecraftforge.common.config.Property;
 
 import com.hilburn.dimensionguard.disabled.BlacklistBlock;
 import com.hilburn.dimensionguard.disabled.WhitelistBlock;
-
+/**
+ * DimensionGuard Mod
+ * 
+ * @author Charlie Paterson
+ * @license GNU General Public License v3
+ **/
 public class ConfigHandler {
 		
 	public static void init(File file)

@@ -4,7 +4,12 @@ import com.hilburn.dimensionguard.Logger;
 
 import net.minecraft.item.Item;
 import cpw.mods.fml.common.registry.GameRegistry;
-
+/**
+ * DimensionGuard Mod
+ * 
+ * @author Charlie Paterson
+ * @license GNU General Public License v3
+ **/
 public class DisabledBlock {
 	protected Item item;
 	public DisabledBlock(String init){

@@ -10,7 +10,12 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent.Action;
 import com.hilburn.dimensionguard.disabled.DisabledBlock;
 
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-
+/**
+ * DimensionGuard Mod
+ * 
+ * @author Charlie Paterson
+ * @license GNU General Public License v3
+ **/
 public class PlaceHandler {
 	
 	public static ArrayList<DisabledBlock> disabled = new ArrayList<DisabledBlock>();

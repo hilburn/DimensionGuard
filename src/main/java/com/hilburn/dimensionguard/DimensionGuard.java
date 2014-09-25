@@ -1,3 +1,4 @@
+
 package com.hilburn.dimensionguard;
 
 import net.minecraftforge.common.MinecraftForge;
@@ -12,6 +13,12 @@ import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 
 
 @Mod(modid = ModInformation.MODID, name = ModInformation.NAME, version = ModInformation.VERSION)
+/**
+ * DimensionGuard Mod
+ * 
+ * @author Charlie Paterson
+ * @license GNU General Public License v3
+ **/
 public class DimensionGuard {
 	PlaceHandler blockEvent = new PlaceHandler();
 	@Instance(ModInformation.MODID)

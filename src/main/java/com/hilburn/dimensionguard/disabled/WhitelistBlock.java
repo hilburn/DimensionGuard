@@ -1,5 +1,10 @@
 package com.hilburn.dimensionguard.disabled;
-
+/**
+ * DimensionGuard Mod
+ * 
+ * @author Charlie Paterson
+ * @license GNU General Public License v3
+ **/
 public class WhitelistBlock extends DisabledBlock {
 	private int[] dimWhitelist;
 	public WhitelistBlock(String init) {
