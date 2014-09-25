@@ -1,0 +1,19 @@
+[
+  {
+    "modid": "DimensionGuard",
+    "name": "DimensionGuard",
+    "description": "Configurable prevention of black placement by dimension",
+	"version": "${version}",
+	"mcversion": "${mcversion}",
+    "url": "",
+    "updateUrl": "",
+    "authors": [
+      "hilburn"
+    ],
+    "credits": "",
+    "logoFile": "",
+    "screenshots": [],
+    "parent":"",
+    "dependencies": []
+  }
+]
