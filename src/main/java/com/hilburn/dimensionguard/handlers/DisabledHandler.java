@@ -62,21 +62,23 @@ public class DisabledHandler {
 			ArrayList<String> wildcardMatch=new ArrayList<String>();
 			if (blockID.contains("*")){
 				blockID.replaceAll("/*", "/./*");
-				Pattern blockPattern = Pattern.compile(blockID);
-				//String[] wildcardSplit=blockID.split("/*");
+				Pattern blockPattern = Pattern.compile(blockID,Pattern.CASE_INSENSITIVE);
 				for (String block:registeredBlocks){
-					//if (containsAll(block,wildcardSplit)) wildcardMatch.add(block);
 					if (blockPattern.matcher(block).find()) wildcardMatch.add(block);
 				}
 			}else{
-				wildcardMatch.add(blockID);
+				if (registeredBlocks.contains(blockID))wildcardMatch.add(blockID);
+				else Logger.log("Block "+blockID+" is not registered");
 			}
-			//Logger.log(wildcardMatch.size()+"");
+
 			for (String match:wildcardMatch){
 				String[] blockData = match.split(":");
 				DisabledBlock newDisabled = new DisabledBlock(Item.getItemFromBlock(GameRegistry.findBlock(blockData[0], blockData[1])),metadata,dimensions,blacklist);//blacklist?new BlacklistBlock(Item.getItemFromBlock(GameRegistry.findBlock(blockInfo[0], blockInfo[1])),metadata,dimensions):new WhitelistBlock(Item.getItemFromBlock(GameRegistry.findBlock(blockInfo[0], blockInfo[1])),metadata,dimensions);
 				if (newDisabled.isEmpty()){
 					Logger.log(match+" has no valid dimensions");
+					continue;
+				}else if (newDisabled.getItem()==null){
+					Logger.log(match+" is not registered");
 					continue;
 				}
 				disabledBlocks.add(newDisabled);

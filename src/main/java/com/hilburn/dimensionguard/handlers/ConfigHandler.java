@@ -31,7 +31,8 @@ public class ConfigHandler {
 		Property blacklistP = config.get("blacklist", "blacklist", new String[] {});
 		blacklistP.comment = "Block ids and dimension(s) blacklisted in (comma delimited) - add each new block on a separate line.\n"
 							+ "Format is 'modid:blockname(:metadata optional),dim1...'\n"
-							+ "eg 'minecraft:chest,0' disables placement of chests in the overworld\n"
+							+ "eg 'minecraft:wool:1,0' disables placement of Orange Wool in the overworld\n"
+							+ "* can be used at any point as a wildcard to allow multiblock or metadata independent disabling\n"
 							+ "Dimensions can be defined as single dimensions (0), ranges (0:5), and more than or less than (0++/1--)";
 		//for (String i : blacklistP.getStringList()) PlaceHandler.disabled.add(new BlacklistBlock(i));
 		blacklistBlock.addAll(Arrays.asList(blacklistP.getStringList()));

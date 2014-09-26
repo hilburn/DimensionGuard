@@ -15,27 +15,6 @@ public class DisabledBlock {
 	protected ArrayList<Integer> dimensions = new ArrayList<Integer>();
 	protected boolean blacklist;
 	public DisabledBlock(Item disable, String metadata, String[] dim, boolean isBlacklist){
-//		String[] splitString = init.split(",");
-//		if (splitString.length<2) {
-//			Logger.log("Insufficient data for meaningful action: "+init);
-//			return;
-//		}
-//		String modName=splitString[0].substring(0, splitString[0].indexOf(':'));
-//		String block=splitString[0].substring(splitString[0].indexOf(':')+1);
-//		String blockName;
-//		String blockMeta;
-//		if (block.contains(":")){
-//			blockName=block.substring(0, block.indexOf(':'));
-//			blockMeta=block.substring(block.indexOf(':')+1);
-//		}else{
-//			blockName=block;
-//			blockMeta="0";
-//		}
-//		item = Item.getItemFromBlock(GameRegistry.findBlock(modName,blockName));
-//		if (item==null){
-//			Logger.log("Block " + splitString[0]+" not found, skipping.");
-//			return;
-//		}
 		item=disable;
 		meta=safeParseInt(metadata);
 		if (meta<-1)meta=0;
