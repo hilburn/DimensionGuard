@@ -25,7 +25,7 @@ public class ConfigHandler {
 		blacklist.setComment("Set blacklisted blocks here (can only not place in certain dimensions)");
 
 		Property blacklistP = config.get("blacklist", "blacklist", new String[] {});
-		blacklistP.comment = "Block ids and dimension(s) blacklisted in (comma delimited) - add each new block on a separate line.\nFormat is 'modid:blockname,dim1...' eg 'minecraft:chest,0' disables placement of chests in the overworld";
+		blacklistP.comment = "Block ids and dimension(s) blacklisted in (comma delimited) - add each new block on a separate line.\nFormat is 'modid:blockname,dim1...' eg 'minecraft:chest,0' disables placement of chests in the overworld\nDimensions cane be defined as single dimensions (0), ranges (0:5), and more than or less than (0++/1--)";
 		for (String i : blacklistP.getStringList()) PlaceHandler.disabled.add(new BlacklistBlock(i));
 		
 		
