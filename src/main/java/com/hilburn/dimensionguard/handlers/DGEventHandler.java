@@ -7,6 +7,8 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent.Action;
 
 import com.hilburn.dimensionguard.Logger;
+import com.hilburn.dimensionguard.items.DisableItem;
+import com.hilburn.dimensionguard.items.ModItems;
 
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 /**
@@ -30,6 +32,13 @@ public class DGEventHandler {
 						//Logger.log(event.entityPlayer.getLookVec().xCoord+","+event.entityPlayer.getLookVec().yCoord+","+event.entityPlayer.getLookVec().zCoord);
 					}
 				}
+			}
+		}else if (event.action==Action.RIGHT_CLICK_AIR && event.entityPlayer.isSneaking()){
+			ItemStack heldItem=event.entityPlayer.getCurrentEquippedItem();
+			if (heldItem!=null&&heldItem.getItem()!=ModItems.disable){
+				ItemStack newStack = DisableItem.storeItem(new ItemStack(ModItems.disable,1), heldItem);
+				event.entityPlayer.inventory.decrStackSize(event.entityPlayer.inventory.currentItem, 64);
+				event.entityPlayer.inventory.addItemStackToInventory(newStack);
 			}
 		}
 	}

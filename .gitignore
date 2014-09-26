@@ -20,6 +20,8 @@
 /options.txt
 /screenshots
 /*.txt
+*.zip
+*.psd
 /server.properties
 /world
-/*.zip
+

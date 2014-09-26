@@ -5,8 +5,9 @@ import java.io.File;
 
 import net.minecraftforge.common.MinecraftForge;
 
-import com.hilburn.dimensionguard.handlers.DisabledHandler;
 import com.hilburn.dimensionguard.handlers.DGEventHandler;
+import com.hilburn.dimensionguard.handlers.DisabledHandler;
+import com.hilburn.dimensionguard.items.ModItems;
 
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
@@ -31,6 +32,7 @@ public class DimensionGuard {
 	@EventHandler 
 	public void preInit(FMLPreInitializationEvent event){
 		config=event.getSuggestedConfigurationFile();
+		ModItems.init();
 	}
 	
 	@EventHandler
