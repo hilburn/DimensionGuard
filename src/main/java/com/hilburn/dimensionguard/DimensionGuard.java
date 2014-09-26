@@ -5,8 +5,8 @@ import java.io.File;
 
 import net.minecraftforge.common.MinecraftForge;
 
-import com.hilburn.dimensionguard.handlers.ConfigHandler;
-import com.hilburn.dimensionguard.handlers.PlaceHandler;
+import com.hilburn.dimensionguard.handlers.DisabledHandler;
+import com.hilburn.dimensionguard.handlers.DGEventHandler;
 
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
@@ -14,7 +14,6 @@ import cpw.mods.fml.common.Mod.Instance;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import cpw.mods.fml.common.registry.GameData;
 
 
 @Mod(modid = ModInformation.MODID, name = ModInformation.NAME, version = ModInformation.VERSION)
@@ -25,8 +24,7 @@ import cpw.mods.fml.common.registry.GameData;
  * @license GNU General Public License v3
  **/
 public class DimensionGuard {
-	PlaceHandler blockEvent = new PlaceHandler();
-	File config;
+	public static File config;
 	@Instance(ModInformation.MODID)
 	public static DimensionGuard instance = new DimensionGuard();
 	
@@ -38,13 +36,14 @@ public class DimensionGuard {
 	@EventHandler
 	public void init(FMLInitializationEvent event){
 		
-		MinecraftForge.EVENT_BUS.register(blockEvent);
+		MinecraftForge.EVENT_BUS.register(new DGEventHandler());
 	}
 	
 	@EventHandler
 	public void postInit(FMLPostInitializationEvent event){
-		ConfigHandler.init(config);
-//		for (Object key:GameData.getBlockRegistry().getKeys().toArray()){
+		DisabledHandler.init();
+//		ConfigHandler.init(config);
+//		for (Object key:GameData.getBlockRegistry().getKeys()){
 //			Logger.log((String) key);
 //		}
 	}
