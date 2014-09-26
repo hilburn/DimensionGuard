@@ -28,7 +28,7 @@ public class PlaceHandler {
 			if (heldItem!=null){
 				if (event.entityPlayer.isSneaking()||!event.world.getBlock(event.x, event.y, event.z)
 						.onBlockActivated(event.world, event.x, event.y, event.z, event.entityPlayer, event.face, 0.5F, 0.5F, 0.5F)){//(event.world.getTileEntity(event.x, event.y, event.z)==null)){
-					if (isDisabled(heldItem.getItem(),event.entityPlayer.dimension)) {
+					if (isDisabled(heldItem.getItem(),heldItem.getItemDamage(),event.entityPlayer.dimension)) {
 						if (event.world.isRemote)Logger.chatLog(event.entityPlayer,"[DimensionGuard] Placing "+heldItem.getDisplayName()+" in Dimension "+ event.entityPlayer.dimension+ " has been disabled.");
 						event.setCanceled(true);
 						//Logger.log(event.entityPlayer.getLookVec().xCoord+","+event.entityPlayer.getLookVec().yCoord+","+event.entityPlayer.getLookVec().zCoord);
@@ -38,9 +38,9 @@ public class PlaceHandler {
 		}
 	}
 	
-	private boolean isDisabled(Item item, int dim){
+	private boolean isDisabled(Item item, int meta, int dim){
 		for (DisabledBlock current:disabled){
-			if (current.getItem()==item && current.isDisabled(dim)) return true;
+			if (current.getItem()==item && current.getMeta()==meta&&current.isDisabled(dim)) return true;
 		}
 		return false;
 	}

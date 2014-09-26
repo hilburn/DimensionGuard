@@ -15,6 +15,7 @@ import cpw.mods.fml.common.registry.GameRegistry;
  **/
 public class DisabledBlock {
 	protected Item item;
+	protected int meta;
 	protected ArrayList<Integer> dimensions = new ArrayList<Integer>();
 	public DisabledBlock(String init){
 		String[] splitString = init.split(",");
@@ -23,12 +24,23 @@ public class DisabledBlock {
 			return;
 		}
 		String modName=splitString[0].substring(0, splitString[0].indexOf(':'));
-		String blockName=splitString[0].substring(splitString[0].indexOf(':')+1);
+		String block=splitString[0].substring(splitString[0].indexOf(':')+1);
+		String blockName;
+		String blockMeta;
+		if (block.contains(":")){
+			blockName=block.substring(0, block.indexOf(':'));
+			blockMeta=block.substring(block.indexOf(':')+1);
+		}else{
+			blockName=block;
+			blockMeta="0";
+		}
 		item = Item.getItemFromBlock(GameRegistry.findBlock(modName,blockName));
 		if (item==null){
 			Logger.log("Block " + splitString[0]+" not found, skipping.");
 			return;
 		}
+		meta=safeParseInt(blockMeta);
+		if (meta<0)meta=0;
 		getDimensions(splitString);
 	}
 	
@@ -70,6 +82,7 @@ public class DisabledBlock {
 	}
 	
 	public Item getItem(){return item;}
+	public int getMeta(){return meta;}
 	
 	public boolean isDisabled(int dim){
 		for (int i=0;i<dimensions.size();i+=2){
