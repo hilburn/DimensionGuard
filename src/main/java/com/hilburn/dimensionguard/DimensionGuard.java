@@ -37,12 +37,13 @@ public class DimensionGuard {
 	
 	@EventHandler
 	public void init(FMLInitializationEvent event){
-		ConfigHandler.init(config);
+		
 		MinecraftForge.EVENT_BUS.register(blockEvent);
 	}
 	
 	@EventHandler
 	public void postInit(FMLPostInitializationEvent event){
+		ConfigHandler.init(config);
 //		for (Object key:GameData.getBlockRegistry().getKeys().toArray()){
 //			Logger.log((String) key);
 //		}
