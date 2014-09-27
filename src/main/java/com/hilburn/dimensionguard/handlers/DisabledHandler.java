@@ -8,7 +8,7 @@ import net.minecraft.item.Item;
 
 import com.hilburn.dimensionguard.DimensionGuard;
 import com.hilburn.dimensionguard.Logger;
-import com.hilburn.dimensionguard.disabled.DisabledBlock;
+import com.hilburn.dimensionguard.disabled.Disabled;
 
 import cpw.mods.fml.common.registry.GameData;
 import cpw.mods.fml.common.registry.GameRegistry;
@@ -20,13 +20,13 @@ import cpw.mods.fml.common.registry.GameRegistry;
  * @license GNU General Public License v3
  **/
 public class DisabledHandler {
-	public static ArrayList<DisabledBlock> disabledBlocks;
+	public static ArrayList<Disabled> disabledBlocks;
 	private static ArrayList<String> registeredBlocks;
 	private static ArrayList<String> registeredItems;
 	
 	public static void init(){
 		ConfigHandler.init(DimensionGuard.config);
-		disabledBlocks = new ArrayList<DisabledBlock>();
+		disabledBlocks = new ArrayList<Disabled>();
 		registeredBlocks=new ArrayList<String>();
 		registeredItems=new ArrayList<String>();
 		
@@ -35,6 +35,7 @@ public class DisabledHandler {
 		}
 		for (Object key:GameData.getItemRegistry().getKeys()){
 			registeredItems.add((String) key);
+			Logger.log((String)key);
 		}
 		addDisabledBlocks(true);
 		addDisabledBlocks(false);
@@ -73,7 +74,7 @@ public class DisabledHandler {
 
 			for (String match:wildcardMatch){
 				String[] blockData = match.split(":");
-				DisabledBlock newDisabled = new DisabledBlock(Item.getItemFromBlock(GameRegistry.findBlock(blockData[0], blockData[1])),metadata,dimensions,blacklist);//blacklist?new BlacklistBlock(Item.getItemFromBlock(GameRegistry.findBlock(blockInfo[0], blockInfo[1])),metadata,dimensions):new WhitelistBlock(Item.getItemFromBlock(GameRegistry.findBlock(blockInfo[0], blockInfo[1])),metadata,dimensions);
+				Disabled newDisabled = new Disabled(Item.getItemFromBlock(GameRegistry.findBlock(blockData[0], blockData[1])),metadata,dimensions,blacklist);//blacklist?new BlacklistBlock(Item.getItemFromBlock(GameRegistry.findBlock(blockInfo[0], blockInfo[1])),metadata,dimensions):new WhitelistBlock(Item.getItemFromBlock(GameRegistry.findBlock(blockInfo[0], blockInfo[1])),metadata,dimensions);
 				if (newDisabled.isEmpty()){
 					Logger.log(match+" has no valid dimensions");
 					continue;
@@ -87,7 +88,7 @@ public class DisabledHandler {
 	}
 	
 	public static boolean isDisabledBlock(Item item, int meta, int dim){
-		for (DisabledBlock current:disabledBlocks){
+		for (Disabled current:disabledBlocks){
 			if (current.getItem()==item && (current.getMeta()==-1||current.getMeta()==meta)&&current.isDisabled(dim)) return true;
 		}
 		return false;

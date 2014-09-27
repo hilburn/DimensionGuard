@@ -9,12 +9,12 @@ import net.minecraft.item.Item;
  * @author Charlie Paterson
  * @license GNU General Public License v3
  **/
-public class DisabledBlock {
+public class Disabled {
 	protected Item item;
 	protected int meta;
 	protected ArrayList<Integer> dimensions = new ArrayList<Integer>();
 	protected boolean blacklist;
-	public DisabledBlock(Item disable, String metadata, String[] dim, boolean isBlacklist){
+	public Disabled(Item disable, String metadata, String[] dim, boolean isBlacklist){
 		item=disable;
 		meta=safeParseInt(metadata);
 		if (meta<-1)meta=0;

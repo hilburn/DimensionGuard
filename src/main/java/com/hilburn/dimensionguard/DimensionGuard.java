@@ -7,8 +7,10 @@ import net.minecraftforge.common.MinecraftForge;
 
 import com.hilburn.dimensionguard.handlers.DGEventHandler;
 import com.hilburn.dimensionguard.handlers.DisabledHandler;
+import com.hilburn.dimensionguard.handlers.TickHandler;
 import com.hilburn.dimensionguard.items.ModItems;
 
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
@@ -37,17 +39,13 @@ public class DimensionGuard {
 	
 	@EventHandler
 	public void init(FMLInitializationEvent event){
-		
+		FMLCommonHandler.instance().bus().register(new TickHandler());
 		MinecraftForge.EVENT_BUS.register(new DGEventHandler());
 	}
 	
 	@EventHandler
 	public void postInit(FMLPostInitializationEvent event){
 		DisabledHandler.init();
-//		ConfigHandler.init(config);
-//		for (Object key:GameData.getBlockRegistry().getKeys()){
-//			Logger.log((String) key);
-//		}
 	}
 	
 }

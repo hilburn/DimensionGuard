@@ -1,8 +1,6 @@
 package com.hilburn.dimensionguard.handlers;
 
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent.Action;
 
@@ -33,22 +31,25 @@ public class DGEventHandler {
 					}
 				}
 			}
-		}else if (event.action==Action.RIGHT_CLICK_AIR && event.entityPlayer.isSneaking()){
-			ItemStack heldItem=event.entityPlayer.getCurrentEquippedItem();
-			if (heldItem!=null&&heldItem.getItem()!=ModItems.disable){
-				ItemStack newStack = DisableItem.storeItem(new ItemStack(ModItems.disable,1), heldItem);
-				event.entityPlayer.inventory.decrStackSize(event.entityPlayer.inventory.currentItem, 64);
-				event.entityPlayer.inventory.addItemStackToInventory(newStack);
-			}
 		}
+//		else if (event.action==Action.RIGHT_CLICK_AIR && event.entityPlayer.isSneaking()){
+//			ItemStack heldItem=event.entityPlayer.getCurrentEquippedItem();
+//			if (heldItem!=null&&heldItem.getItem()!=ModItems.disable){
+//				ItemStack newStack = DisableItem.storeItem(new ItemStack(ModItems.disable,1), heldItem);
+//				event.entityPlayer.inventory.decrStackSize(event.entityPlayer.inventory.currentItem, 64);
+//				event.entityPlayer.inventory.addItemStackToInventory(newStack);
+//			}
+//		}
 	}
 	
-	@SubscribeEvent
-	public void JoinWorld(EntityJoinWorldEvent event){
-		if (event.entity instanceof EntityPlayer){
-			Logger.chatLog((EntityPlayer)event.entity, "Joining new world");
-		}
-	}
+//	@SubscribeEvent
+//	public void JoinWorld(EntityJoinWorldEvent event){
+//		if (event.entity instanceof EntityPlayer){
+//			Logger.chatLog((EntityPlayer)event.entity, "Joining new world");
+//		}
+//	}
+	
+
 	
 	
 	
