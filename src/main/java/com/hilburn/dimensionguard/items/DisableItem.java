@@ -29,7 +29,7 @@ public class DisableItem extends Item{
 		super();
 		setUnlocalizedName("disable");
 		setCreativeTab(null);
-		setTextureName("dimensionguard:lock");
+		//setTextureName("dimensionguard:lock");
 	}
 
 	public static ItemStack storeItem(ItemStack thisStack, ItemStack storeStack){
@@ -51,14 +51,15 @@ public class DisableItem extends Item{
 		return result;
 	}
 	
-//	@Override
-//	public ItemStack onItemRightClick(ItemStack thisStack, World world,EntityPlayer player) {
-//		if (!world.isRemote){
-//			thisStack=recoverItemStack(thisStack);
-//		//player.inventory.decrStackSize(player.inventory.currentItem, 64);
-//		}
-//		return thisStack;
-//	}
+	@Override
+	public IIcon getIconFromDamage(int p_77617_1_) {
+		return this.lock;
+	}
+	
+    @Override
+	public void registerIcons(IIconRegister reg) {
+		this.lock=reg.registerIcon(ModInformation.MODID + ":lock");
+	}
     
 	@SuppressWarnings({"unchecked", "rawtypes" })
 	@Override

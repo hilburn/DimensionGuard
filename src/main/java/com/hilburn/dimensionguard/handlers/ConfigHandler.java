@@ -15,18 +15,14 @@ import net.minecraftforge.common.config.Property;
  * @license GNU General Public License v3
  **/
 public class ConfigHandler {
-	public static ArrayList<String> blacklistBlock;
-	public static ArrayList<String> whitelistBlock;
-	public static ArrayList<String> blacklistItem;
-	public static ArrayList<String> whitelistItem;
+	public static ArrayList<String> blackList;
+	public static ArrayList<String> whiteList;
 	//@SuppressWarnings("unchecked")
 	public static void init(File file)
 	{
 		Configuration config = new Configuration(file);
-		blacklistBlock = new ArrayList<String>();
-		whitelistBlock = new ArrayList<String>();
-		blacklistItem = new ArrayList<String>();
-		whitelistItem = new ArrayList<String>();
+		blackList = new ArrayList<String>();
+		whiteList = new ArrayList<String>();
 		config.load();
 		
 		ConfigCategory instructions = config.getCategory("Formatting Instructions");
@@ -39,30 +35,30 @@ public class ConfigHandler {
 		ConfigCategory blacklist = config.getCategory("blacklist");
 		blacklist.setComment("Set blacklists here (can only not place in certain dimensions)");
 
-		Property blacklistBlockP = config.get("blacklist", "block", new String[] {});
-		blacklistBlockP.comment = "Block ids and dimension(s) blacklisted - add each new block on a separate line.\n"
-							+ "Format is 'modid:blockname(:metadata optional),dim1...'";
+		Property blacklistP = config.get("blacklist", "blacklist", new String[] {});
+		blacklistP.comment = "Block and item identifiers and dimension(s) blacklisted - add each new element on a separate line.\n"
+							+ "Format is 'modid:name(:metadata optional),dim1...'";
 		//for (String i : blacklistP.getStringList()) PlaceHandler.disabled.add(new BlacklistBlock(i));
-		blacklistBlock.addAll(Arrays.asList(blacklistBlockP.getStringList()));
+		blackList.addAll(Arrays.asList(blacklistP.getStringList()));
 		
-		Property blacklistItemP = config.get("blacklist", "item", new String[] {});
-		blacklistItemP.comment = "Item ids and dimension(s) blacklisted - add each new item on a separate line.\n"
-							+ "Format is 'modid:itemname(:damage optional),dim1,dim2...' etc.";
-		//for (String i : blacklistP.getStringList()) PlaceHandler.disabled.add(new BlacklistBlock(i));
-		blacklistItem.addAll(Arrays.asList(blacklistItemP.getStringList()));
+//		Property blacklistItemP = config.get("blacklist", "item", new String[] {});
+//		blacklistItemP.comment = "Item ids and dimension(s) blacklisted - add each new item on a separate line.\n"
+//							+ "Format is 'modid:itemname(:damage optional),dim1,dim2...' etc.";
+//		//for (String i : blacklistP.getStringList()) PlaceHandler.disabled.add(new BlacklistBlock(i));
+//		blacklistItem.addAll(Arrays.asList(blacklistItemP.getStringList()));
 		
 		ConfigCategory whitelist = config.getCategory("whitelist");
 		whitelist.setComment("Set whitelists here (can only place in certain dimensions)");
 
-		Property whitelistBlockP = config.get("whitelist", "block", new String[] {});
-		whitelistBlockP.comment = "Block ids and dimension(s) whitelisted - add each new block on a separate line\n"
-						+ "Format is 'modid:blockname(:damage optional),dim1...'";
-		whitelistBlock.addAll(Arrays.asList(whitelistBlockP.getStringList()));
+		Property whitelistP = config.get("whitelist", "whitelist", new String[] {});
+		whitelistP.comment = "Block and item identifiers and dimension(s) blacklisted - add each new element on a separate line.\n"
+							+ "Format is 'modid:blockname(:metadata optional),dim1...'";
+		whiteList.addAll(Arrays.asList(whitelistP.getStringList()));
 		
-		Property whitelistItemP = config.get("whitelist", "item", new String[] {});
-		whitelistItemP.comment = "Item ids and dimension(s) whitelisted - add each new item on a separate line.\n"
-							+ "Format is 'modid:itemname(:damage optional),dim1,dim2...' etc.";
-		whitelistItem.addAll(Arrays.asList(whitelistItemP.getStringList()));
+//		Property whitelistItemP = config.get("whitelist", "item", new String[] {});
+//		whitelistItemP.comment = "Item ids and dimension(s) whitelisted - add each new item on a separate line.\n"
+//							+ "Format is 'modid:itemname(:damage optional),dim1,dim2...' etc.";
+//		whitelistItem.addAll(Arrays.asList(whitelistItemP.getStringList()));
 		
 		config.save();
 	}

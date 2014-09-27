@@ -51,7 +51,7 @@ public class DisabledHandler {
 	}
 	
 	private static void addDisabledBlocks(boolean blacklist){
-		ArrayList<String> strings = blacklist?ConfigHandler.blacklistBlock:ConfigHandler.whitelistBlock;
+		ArrayList<String> strings = blacklist?ConfigHandler.blackList:ConfigHandler.whiteList;
 		String[] splitString;
 		String[] dimensions;
 		for (String disableBlock: strings){
