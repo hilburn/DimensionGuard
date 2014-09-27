@@ -1,6 +1,8 @@
 package com.hilburn.dimensionguard.handlers;
 
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent.Action;
 
@@ -9,6 +11,7 @@ import com.hilburn.dimensionguard.items.DisableItem;
 import com.hilburn.dimensionguard.items.ModItems;
 
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import cpw.mods.fml.common.registry.GameRegistry;
 /**
  * DimensionGuard Mod
  * 
@@ -24,7 +27,8 @@ public class DGEventHandler {
 			if (heldItem!=null){
 				if (event.entityPlayer.isSneaking()||!event.world.getBlock(event.x, event.y, event.z)
 						.onBlockActivated(event.world, event.x, event.y, event.z, event.entityPlayer, event.face, 0.5F, 0.5F, 0.5F)){//(event.world.getTileEntity(event.x, event.y, event.z)==null)){
-					if (DisabledHandler.isDisabledBlock(heldItem.getItem(),heldItem.getItemDamage(),event.entityPlayer.dimension)) {
+					//if (DisabledHandler.isDisabledBlock(heldItem.getItem(),heldItem.getItemDamage(),event.entityPlayer.dimension)) {
+					if (DisabledHandler.isDisabled(GameRegistry.findUniqueIdentifierFor(heldItem.getItem()).toString(),heldItem.getItemDamage(),event.entityPlayer.dimension)) {
 						if (event.world.isRemote)Logger.chatLog(event.entityPlayer,"[DimensionGuard] Placing "+heldItem.getDisplayName()+" in Dimension "+ event.entityPlayer.dimension+ " has been disabled.");
 						event.setCanceled(true);
 						//Logger.log(event.entityPlayer.getLookVec().xCoord+","+event.entityPlayer.getLookVec().yCoord+","+event.entityPlayer.getLookVec().zCoord);
@@ -42,12 +46,12 @@ public class DGEventHandler {
 //		}
 	}
 	
-//	@SubscribeEvent
-//	public void JoinWorld(EntityJoinWorldEvent event){
-//		if (event.entity instanceof EntityPlayer){
-//			Logger.chatLog((EntityPlayer)event.entity, "Joining new world");
-//		}
-//	}
+	@SubscribeEvent
+	public void JoinWorld(EntityJoinWorldEvent event){
+		if (event.entity instanceof EntityPlayer){
+			DisabledHandler.scanInventory((EntityPlayer)event.entity);
+		}
+	}
 	
 
 	

@@ -1,7 +1,7 @@
 package com.hilburn.dimensionguard.items;
 
-import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.item.Item;
+import cpw.mods.fml.common.registry.GameRegistry;
 
 /**
  * DimensionGuard Mod

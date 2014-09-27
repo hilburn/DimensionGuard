@@ -22,6 +22,13 @@ public class Disabled {
 		getDimensions(dim);
 	}
 	
+	public Disabled(String metadata, String[] dim, boolean isBlacklist){
+		meta=safeParseInt(metadata);
+		if (meta<-1)meta=0;
+		blacklist=isBlacklist;
+		getDimensions(dim);
+	}
+	
 	private void getDimensions(String[] splitString){
 		int lower;
 		int upper;
@@ -63,6 +70,11 @@ public class Disabled {
 			if (dimensions.get(i)<=dim && dim<=dimensions.get(i+1)) return !(true^blacklist);
 		}
 		return !(false^blacklist);
+	}
+	
+	public boolean metaMatch(int metadata){
+		if (meta==-1||meta==metadata)return true;
+		return false;
 	}
 	
 	public Item getItem(){return item;}
