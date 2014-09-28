@@ -254,6 +254,7 @@ public class DisabledRenderer implements IItemRenderer {
 
         if (isInventory){
     		renderItem.renderItemIntoGUI(fontRenderer, textureManager, itemStack, 0, 0);
+    		//TODO: only renders on items, not blocks - fix
     	}
     }
     
