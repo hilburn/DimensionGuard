@@ -22,6 +22,11 @@ public class Disabled {
 		getDimensions(dim);
 	}
 	
+	public Disabled(String[] dim, boolean isBlacklist){
+		blacklist=isBlacklist;
+		getDimensions(dim);
+	}
+	
 	public Disabled(String metadata, String[] dim, boolean isBlacklist){
 		meta=safeParseInt(metadata);
 		if (meta<-1)meta=0;

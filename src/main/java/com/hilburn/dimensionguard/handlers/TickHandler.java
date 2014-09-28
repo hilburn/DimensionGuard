@@ -14,7 +14,7 @@ public class TickHandler {
 	@SubscribeEvent
 	public void onPlayerTick(TickEvent.PlayerTickEvent event) {
 		if (tickCount++==triggerTick){
-			DisabledHandler.scanInventory(event.player);
+			DisabledHandler.scanInventory(event.player,false);
 			tickCount=0;
 		}
 	}

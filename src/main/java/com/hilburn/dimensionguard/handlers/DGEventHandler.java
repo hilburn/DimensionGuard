@@ -59,7 +59,7 @@ public class DGEventHandler {
 	@SubscribeEvent
 	public void JoinWorld(EntityJoinWorldEvent event){
 		if (event.entity instanceof EntityPlayer){
-			DisabledHandler.scanInventory((EntityPlayer)event.entity);
+			DisabledHandler.scanInventory((EntityPlayer)event.entity,true);
 		}
 	}
 	
