@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.Map;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -33,7 +34,6 @@ public class DisabledHandler {
 	private static ArrayList<String> registeredItems;
 	
 	public static void init(){
-		//Logger.log(EntityList.classToStringMapping.toString());
 		ConfigHandler.init(DimensionGuard.config);
 		disabledBlocks = new ArrayList<Disabled>();
 		registeredBlocks=new ArrayList<String>();
@@ -143,6 +143,7 @@ public class DisabledHandler {
 					if(!thisStack.stackTagCompound.getCompoundTag("DimensionGuard").hasKey("LastDimChecked"))
 						thisStack.stackTagCompound.getCompoundTag("DimensionGuard").setInteger("LastDimChecked",Integer.MIN_VALUE);
 					if(thisStack.stackTagCompound.getCompoundTag("DimensionGuard").getInteger("LastDimChecked")!=player.dimension){
+						
 						if (thisStack.getItem()==ModItems.disable){
 							ItemStack storeStack = DisableItem.recoverItemStack(thisStack);
 							//Logger.log(storeStack.getDisplayName());
@@ -162,8 +163,5 @@ public class DisabledHandler {
 		}
 	}
 	
-	@SuppressWarnings("rawtypes")
-	public static boolean isDisabledEntity(Class entityClass, int dim){
-		return false;
-	}
+//TODO: Future feature - Disabled Items
 }

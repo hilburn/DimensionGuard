@@ -50,7 +50,6 @@ public class DimensionGuard {
 	@EventHandler
 	public void postInit(FMLPostInitializationEvent event){
 		DisabledHandler.init();
-		
 	}
 	
 }

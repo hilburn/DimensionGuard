@@ -2,14 +2,14 @@ package com.hilburn.dimensionguard.handlers;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
-import net.minecraftforge.event.entity.living.LivingSpawnEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent.Action;
 
 import com.hilburn.dimensionguard.Logger;
 
-import cpw.mods.fml.common.eventhandler.Event.Result;
+import cpw.mods.fml.common.eventhandler.EventPriority;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.registry.GameRegistry;
 /**
@@ -44,16 +44,6 @@ public class DGEventHandler {
 //				event.entityPlayer.inventory.addItemStackToInventory(newStack);
 //			}
 //		}
-	}
-	
-	@SubscribeEvent
-	public void spawnEvent(LivingSpawnEvent event){
-		//Logger.log((String)EntityList.classToStringMapping.get(event.entityLiving.getClass()));
-	}
-	
-	@SubscribeEvent 
-	public void checkSpawnEvent(LivingSpawnEvent.CheckSpawn event){
-		if (DisabledHandler.isDisabledEntity(event.entityLiving.getClass(), event.entityLiving.dimension)) event.setResult(Result.DENY);
 	}
 	
 	@SubscribeEvent
