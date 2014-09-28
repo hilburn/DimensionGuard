@@ -8,8 +8,12 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.IIcon;
+import net.minecraft.world.World;
 
 import com.hilburn.dimensionguard.ModInformation;
+
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 /**
  * DimensionGuard Mod
@@ -33,7 +37,6 @@ public class DisableItem extends Item{
 		thisStack.stackSize=storeStack.stackSize;
 		NBTTagCompound nbttagcompound1 = new NBTTagCompound();
 		storeStack.stackSize=1;
-		storeStack.stackTagCompound.getCompoundTag("DimensionGuard").removeTag("LastDimChecked");
 		storeStack.writeToNBT(nbttagcompound1);
 		//thisStack.stackTagCompound.setString("Store",storeStack.getDisplayName());
 		thisStack.stackTagCompound.setInteger("MaxStackSize",storeStack.getMaxStackSize());

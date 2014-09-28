@@ -2,12 +2,13 @@ package com.hilburn.dimensionguard.client;
 
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.client.renderer.texture.TextureManager;
+import net.minecraft.client.renderer.texture.TextureUtil;
+import net.minecraft.entity.Entity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
@@ -22,20 +23,26 @@ import org.lwjgl.opengl.GL12;
 
 public class DisabledRenderer implements IItemRenderer {
     private static RenderItem renderItem = new RenderItem();
-    @SuppressWarnings("unused")
-	private static ResourceLocation lockTexture = new ResourceLocation("dimensionguard","textures/items/lock.png");
+    private static ResourceLocation lockTexture = new ResourceLocation("dimensionguard","textures/items/lock.png");
     private static Minecraft mc = Minecraft.getMinecraft();
+    //private static FontRenderer fontRenderer=mc.fontRenderer;
     private static RenderBlocks renderBlocksIr = new RenderBlocks();
 
 
     @Override
     public boolean handleRenderType (ItemStack item, ItemRenderType type)
     {
+        if (!item.hasTagCompound())
+            return false;
+
         switch (type)
         {
         case ENTITY:
+            return true;
         case EQUIPPED:
+            GL11.glTranslatef(0.03f, 0F, -0.09375F);
         case EQUIPPED_FIRST_PERSON:
+            return true;
         case INVENTORY:
             return true;
         default:
@@ -44,54 +51,38 @@ public class DisabledRenderer implements IItemRenderer {
         }
     }
     
-	@Override
-	public boolean shouldUseRenderHelper(ItemRenderType type, ItemStack itemStack, ItemRendererHelper helper) {
-    	ItemStack thisStack = ItemStack.loadItemStackFromNBT((NBTTagCompound) itemStack.stackTagCompound.getTag("ItemStack"));
-    	boolean isInventory = type == ItemRenderType.INVENTORY;
-    	boolean special = MinecraftForgeClient.getItemRenderer(thisStack, type)!=null;
-    	Item item = thisStack.getItem();
-        Block block = Block.getBlockFromItem(item);
-    	boolean isBlock = thisStack.getItemSpriteNumber() == 0 && item instanceof ItemBlock && RenderBlocks.renderItemIn3d(block.getRenderType());
-		return !isInventory||isBlock||special;
-	}
-    
-    
     @Override
     public void renderItem (ItemRenderType type, ItemStack itemStack, Object... data)
     {
     	ItemStack thisStack = ItemStack.loadItemStackFromNBT((NBTTagCompound) itemStack.stackTagCompound.getTag("ItemStack"));
 
         boolean isInventory = type == ItemRenderType.INVENTORY;
-
+        Entity ent = null;
+        if (data.length > 1)
+            ent = (Entity) data[1];
         Tessellator tess = Tessellator.instance;
-        FontRenderer fontRenderer = mc.fontRenderer;
-        TextureManager textureManager = mc.getTextureManager();
+        
+        TextureManager texturemanager = mc.getTextureManager();
     	GL11.glPushMatrix();
         Item item = thisStack.getItem();
         Block block = Block.getBlockFromItem(item);
-
+//        Entity ent = null;
+//        if (data.length > 1)
+//            ent = (Entity) data[1];
         if (thisStack != null && block != null && block.getRenderBlockPass() != 0){
             GL11.glEnable(GL11.GL_BLEND);
             GL11.glEnable(GL11.GL_CULL_FACE);
             OpenGlHelper.glBlendFunc(770, 771, 1, 0);
         }
 		IItemRenderer storedRenderer = MinecraftForgeClient.getItemRenderer(thisStack, type);
-		//======Handles Special Blocks and Items======
 		if (storedRenderer!=null){
-			storedRenderer.renderItem(type, thisStack, data); 
+			storedRenderer.renderItem(type, thisStack, data);
 		}
 		else{
 			if (thisStack.getItemSpriteNumber() == 0 && item instanceof ItemBlock && RenderBlocks.renderItemIn3d(block.getRenderType()))
-	        { 													
-				//=====Handles regular blocks======
-	            textureManager.bindTexture(textureManager.getResourceLocation(0));
-	            switch (type){
-	            case EQUIPPED_FIRST_PERSON:
-	            case EQUIPPED:
-	            case ENTITY:
-	            	GL11.glTranslatef(0.5F, 0.5F, 0.5F);
-	            default:
-	            }
+	        {
+	            texturemanager.bindTexture(texturemanager.getResourceLocation(0));
+
 	            if (thisStack != null && block != null && block.getRenderBlockPass() != 0)
 	            {
 	                GL11.glDepthMask(false);
@@ -104,10 +95,57 @@ public class DisabledRenderer implements IItemRenderer {
 	            }
 	        }
 			else{
-				//=======Handles Regular Items======
-				if (isInventory)
+				IIcon icon = thisStack.getIconIndex();
+				float xMax;
+		        float yMin;
+		        float xMin;
+		        float yMax;
+		        float depth = 1f / 16f;
+
+		        float width;
+		        float height;
+		        float xDiff;
+		        float yDiff;
+		        float xSub;
+		        float ySub;
+
+		        xMin = icon.getMinU();
+		        xMax = icon.getMaxU();
+		        yMin = icon.getMinV();
+		        yMax = icon.getMaxV();
+		        width = icon.getIconWidth();
+		        height = icon.getIconHeight();
+		        xDiff = xMin - xMax;
+		        yDiff = yMin - yMax;
+		        xSub = 0.5f * (xMax - xMin) / width;
+		        ySub = 0.5f * (yMax - yMin) / height;
+		        
+
+		        if (isInventory)
 		        {
-		        	renderItem.renderItemIntoGUI(fontRenderer, textureManager, thisStack, 0, 0);
+		            texturemanager.getResourceLocation(thisStack.getItemSpriteNumber());
+		            TextureUtil.func_152777_a(false, false, 1.0F);
+
+		            GL11.glDisable(GL11.GL_LIGHTING);
+		            //GL11.glEnable(GL11.GL_ALPHA_TEST);
+		            //GL11.glAlphaFunc(GL11.GL_GREATER, 0.5F);
+		            GL11.glDisable(GL11.GL_BLEND);
+
+		            tess.startDrawingQuads();
+
+	                //tess.setColorOpaque_I(color[i]);
+	                tess.addVertexWithUV(0, 16, 0, xMin, yMax);
+	                tess.addVertexWithUV(16, 16, 0, xMax, yMax);
+	                tess.addVertexWithUV(16, 0, 0, xMax, yMin);
+	                tess.addVertexWithUV(0, 0, 0, xMin, yMin);
+
+		            tess.draw();
+		            GL11.glEnable(GL11.GL_LIGHTING);
+		            //GL11.glDisable(GL11.GL_ALPHA_TEST);
+
+		            //GL11.glDisable(GL12.GL_RESCALE_NORMAL);
+		            texturemanager.bindTexture(texturemanager.getResourceLocation(thisStack.getItemSpriteNumber()));
+		            TextureUtil.func_147945_b();
 		        }
 		        else
 		        {
@@ -115,43 +153,16 @@ public class DisabledRenderer implements IItemRenderer {
 		            switch (type)
 		            {
 		            case EQUIPPED_FIRST_PERSON:
-		            	//TODO: get items to render in the right place
+		                break;
 		            case EQUIPPED:
-		            	GL11.glRotated(90F, 0F, 1F, 0F);
-		            	GL11.glTranslatef(-0.8F, 0.7F, -0.8F);
-		                //GL11.glTranslatef(0, -4 / 16f, 0);
+		                GL11.glTranslatef(0, -4 / 16f, 0);
 		                break;
 		            case ENTITY:
-		                //GL11.glTranslatef(-0.5f, 0f, 1f / 16f); // correction of the rotation point when items lie on the ground
+		                GL11.glTranslatef(-0.5f, 0f, depth); // correction of the rotation point when items lie on the ground
 		            default:
 		            }
-		            
-		            IIcon icon = thisStack.getIconIndex();
-					float xMax;
-			        float yMin;
-			        float xMin;
-			        float yMax;
-			        float depth = 1f / 16f;
 
-			        float width;
-			        float height;
-			        float xDiff;
-			        float yDiff;
-			        float xSub;
-			        float ySub;
-
-			        xMin = icon.getMinU();
-			        xMax = icon.getMaxU();
-			        yMin = icon.getMinV();
-			        yMax = icon.getMaxV();
-			        width = icon.getIconWidth();
-			        height = icon.getIconHeight();
-			        xDiff = xMin - xMax;
-			        yDiff = yMin - yMax;
-			        xSub = 0.5f * (xMax - xMin) / width;
-			        ySub = 0.5f * (yMax - yMin) / height;
-		            
-		            //=====Front and back=====
+		            //=====Sides=====
 		            tess.startDrawingQuads();
 		            tess.setNormal(0, 0, 1);
 	                tess.addVertexWithUV(0, 0, 0, xMax, yMax);
@@ -168,7 +179,7 @@ public class DisabledRenderer implements IItemRenderer {
 	                tess.addVertexWithUV(0, 0, -depth, xMax, yMax);
 		            tess.draw();
 
-		            // =========Sides============
+		            // ========3Derize=============
 		            tess.startDrawingQuads();
 		            tess.setNormal(-1, 0, 0);
 		            float pos;
@@ -247,14 +258,93 @@ public class DisabledRenderer implements IItemRenderer {
             GL11.glDisable(GL11.GL_BLEND);
         }
         
-		
-		
-		
         GL11.glPopMatrix();
 
-        if (isInventory){
-    		renderItem.renderItemIntoGUI(fontRenderer, textureManager, itemStack, 0, 0);
-    	}
+        
     }
+
+	@Override
+	public boolean shouldUseRenderHelper(ItemRenderType type, ItemStack item,ItemRendererHelper helper) {
+		return true;
+	}
     
+   /* @Override
+    public void renderItem(ItemRenderType type, ItemStack itemStack, Object... data) {
+    	ItemStack thisStack = ItemStack.loadItemStackFromNBT((NBTTagCompound) itemStack.stackTagCompound.getTag("ItemStack"));
+    	Tessellator tessellator=Tessellator.instance;
+    	TextureManager texturemanager = mc.getTextureManager();
+    	GL11.glPushMatrix();
+        Item item = thisStack.getItem();
+        Block block = Block.getBlockFromItem(item);
+//        Entity ent = null;
+//        if (data.length > 1)
+//            ent = (Entity) data[1];
+        if (thisStack != null && block != null && block.getRenderBlockPass() != 0){
+            GL11.glEnable(GL11.GL_BLEND);
+            GL11.glEnable(GL11.GL_CULL_FACE);
+            OpenGlHelper.glBlendFunc(770, 771, 1, 0);
+        }
+		IItemRenderer storedRenderer = MinecraftForgeClient.getItemRenderer(thisStack, type);
+		if (storedRenderer!=null){
+			storedRenderer.renderItem(type, thisStack, data);
+		}
+		else{
+			if (thisStack.getItemSpriteNumber() == 0 && item instanceof ItemBlock && RenderBlocks.renderItemIn3d(block.getRenderType()))
+	        {
+	            texturemanager.bindTexture(texturemanager.getResourceLocation(0));
+
+	            if (thisStack != null && block != null && block.getRenderBlockPass() != 0)
+	            {
+	                GL11.glDepthMask(false);
+	                renderBlocksIr.renderBlockAsItem(block, thisStack.getItemDamage(), 1.0F);
+	                GL11.glDepthMask(true);
+	            }
+	            else
+	            {
+	                renderBlocksIr.renderBlockAsItem(block, thisStack.getItemDamage(), 1.0F);
+	            }
+	        }
+			else{
+				//Render Item
+				//IIcon icon = thisStack.getIconIndex();
+                if (type==ItemRenderType.INVENTORY){
+                	//renderItem.renderItemIntoGUI(mc.fontRenderer, texturemanager, thisStack, 0, 0,true);
+                }
+			}
+		}
+		
+		if (thisStack != null && block != null && block.getRenderBlockPass() != 0)
+        {
+            GL11.glDisable(GL11.GL_BLEND);
+        }
+
+		
+		
+		if(type==ItemRenderType.INVENTORY){
+			IIcon icon = itemStack.getIconIndex();
+			TextureUtil.func_152777_a(false, false, 1.0F);
+			 GL11.glDisable(GL11.GL_LIGHTING);
+	            GL11.glEnable(GL11.GL_ALPHA_TEST);
+	            GL11.glAlphaFunc(GL11.GL_GREATER, 0.5F);
+	            GL11.glDisable(GL11.GL_BLEND);
+			//renderItem.renderEffect(texturemanager, 0, 0);
+			
+			
+			tessellator.startDrawingQuads();
+			GL11.
+			GL11.glVertex2d(x, y)
+			tessellator.addVertexWithUV(0,1,0,icon.getMinU(),icon.getMaxV());
+			tessellator.addVertexWithUV(1,1,0,icon.getMaxU(),icon.getMaxV());
+			tessellator.addVertexWithUV(1,0,0,icon.getMaxU(),icon.getMinV());
+			tessellator.addVertexWithUV(0,0,0,icon.getMinU(),icon.getMinV());
+			tessellator.draw();
+			GL11.glEnable(GL11.GL_LIGHTING);
+            GL11.glDisable(GL11.GL_ALPHA_TEST);
+
+            //GL11.glDisable(GL12.GL_RESCALE_NORMAL);
+            texturemanager.bindTexture(lockTexture);
+            TextureUtil.func_147945_b();
+		}
+		GL11.glPopMatrix(); 
+    }*/
 }
