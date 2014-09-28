@@ -22,7 +22,7 @@ group= "com.hilburn.dimensionguard" // http://maven.apache.org/guides/mini/guide
 archivesBaseName = "DimensionGuard"
 
 minecraft {
-    version = "1.7.10-10.13.0.1205"
+    version = "1.7.10-10.13.0.1208"
     assetDir = "eclipse/assets"
 }
 

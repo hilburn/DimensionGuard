@@ -17,5 +17,6 @@ public class ClientProxy extends CommonProxy {
 	@Override
 	public void initRenderers() {
 		MinecraftForgeClient.registerItemRenderer(ModItems.disable, new DisabledRenderer());
+		//MinecraftForgeClient.registerItemRenderer(ModItems.disable, new NewRenderer());
 	}
 }
