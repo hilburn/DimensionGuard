@@ -19,14 +19,18 @@ import net.minecraftforge.client.MinecraftForgeClient;
 
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
-
+/**
+ * DimensionGuard Mod
+ * 
+ * @author Charlie Paterson
+ * @license GNU General Public License v3
+ **/
 public class DisabledRenderer implements IItemRenderer {
     private static RenderItem renderItem = new RenderItem();
     @SuppressWarnings("unused")
 	private static ResourceLocation lockTexture = new ResourceLocation("dimensionguard","textures/items/lock.png");
     private static Minecraft mc = Minecraft.getMinecraft();
     private static RenderBlocks renderBlocksIr = new RenderBlocks();
-
 
     @Override
     public boolean handleRenderType (ItemStack item, ItemRenderType type)

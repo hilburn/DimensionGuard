@@ -17,7 +17,7 @@ buildscript {
 
 apply plugin: 'forge'
 
-version = "0.8.0-1.7.10"
+version = "0.9.0-1.7.10"
 group= "com.hilburn.dimensionguard" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "DimensionGuard"
 
