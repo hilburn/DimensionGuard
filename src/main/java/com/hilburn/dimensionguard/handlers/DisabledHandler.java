@@ -10,6 +10,7 @@ import net.minecraft.entity.EntityList;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.world.WorldProvider;
 
 import com.hilburn.dimensionguard.DimensionGuard;
 import com.hilburn.dimensionguard.Logger;
@@ -91,15 +92,6 @@ public class DisabledHandler {
 			if (wildcardMatch.isEmpty())Logger.log(blockID+" has no registered matches");
 			Disabled newDisabled = new Disabled(metadata,dimensions,blacklist);
 			for (String match:wildcardMatch){
-//				String[] blockData = match.split(":");
-//				Disabled newDisabled = new Disabled(Item.getItemFromBlock(GameRegistry.findBlock(blockData[0], blockData[1])),metadata,dimensions,blacklist);//blacklist?new BlacklistBlock(Item.getItemFromBlock(GameRegistry.findBlock(blockInfo[0], blockInfo[1])),metadata,dimensions):new WhitelistBlock(Item.getItemFromBlock(GameRegistry.findBlock(blockInfo[0], blockInfo[1])),metadata,dimensions);
-//				if (newDisabled.isEmpty()){
-//					Logger.log(match+" has no valid dimensions");
-//					continue;
-//				}else if (newDisabled.getItem()==null){
-//					Logger.log(match+" is not registered");
-//					continue;
-//				}
 				ArrayList<Disabled> temp = new ArrayList<Disabled>(Arrays.asList(newDisabled));
 				if (disabledHash.get(match)!=null)temp.addAll(disabledHash.get(match));
 				disabledHash.put(match, temp);
@@ -108,7 +100,7 @@ public class DisabledHandler {
 			}
 		}
 	}
-	
+
 	private static void addDisabledEntity(boolean blacklist){
 		ArrayList<String> strings = blacklist?ConfigHandler.entityBlacklist:ConfigHandler.entityWhitelist;
 		String[] splitString;
@@ -162,35 +154,67 @@ public class DisabledHandler {
 		for (int i=0;i<player.inventory.getSizeInventory();i++){
 			ItemStack thisStack=player.inventory.getStackInSlot(i);
 			if (thisStack!=null){
-				if(thisStack.stackTagCompound==null){
-					thisStack.stackTagCompound=new NBTTagCompound();
-				}
-				if(!thisStack.stackTagCompound.hasKey("DimensionGuard"))
-					thisStack.stackTagCompound.setTag("DimensionGuard", new NBTTagCompound());
-				if(!thisStack.stackTagCompound.getCompoundTag("DimensionGuard").hasKey("CanBeDisabled")||setCanBeDisabled)
-					thisStack.stackTagCompound.getCompoundTag("DimensionGuard").setBoolean("CanBeDisabled", 
-							DisabledHandler.canBeDisabled(GameRegistry.findUniqueIdentifierFor(thisStack.getItem()).toString(), thisStack.getItemDamage()));
-				if(thisStack.stackTagCompound.getCompoundTag("DimensionGuard").getBoolean("CanBeDisabled")||thisStack.getItem()==ModItems.disable){
-					if(!thisStack.stackTagCompound.getCompoundTag("DimensionGuard").hasKey("LastDimChecked"))
-						thisStack.stackTagCompound.getCompoundTag("DimensionGuard").setInteger("LastDimChecked",Integer.MIN_VALUE);
-					if(thisStack.stackTagCompound.getCompoundTag("DimensionGuard").getInteger("LastDimChecked")!=player.dimension){
-						if (thisStack.getItem()==ModItems.disable){
-							ItemStack storeStack = DisableItem.recoverItemStack(thisStack);
-							//Logger.log(storeStack.getDisplayName());
-							if (!DisabledHandler.isDisabled(GameRegistry.findUniqueIdentifierFor(storeStack.getItem()).toString(), storeStack.getItemDamage(),player.dimension)){
-								player.inventory.setInventorySlotContents(i, storeStack);
-							}
-						}else{
-							if (DisabledHandler.isDisabled(GameRegistry.findUniqueIdentifierFor(thisStack.getItem()).toString(), thisStack.getItemDamage(),player.dimension)){
-								player.inventory.setInventorySlotContents(i, DisableItem.storeItem(new ItemStack(ModItems.disable,1), thisStack));
-							}else{
-								thisStack.stackTagCompound.getCompoundTag("DimensionGuard").setInteger("LastDimChecked",player.dimension);
-							}
-						}
+				player.inventory.setInventorySlotContents(i, scanStack(thisStack,player.dimension,setCanBeDisabled));
+//				if(thisStack.stackTagCompound==null){
+//					thisStack.stackTagCompound=new NBTTagCompound();
+//				}
+//				if(!thisStack.stackTagCompound.hasKey("DimensionGuard"))
+//					thisStack.stackTagCompound.setTag("DimensionGuard", new NBTTagCompound());
+//				if(!thisStack.stackTagCompound.getCompoundTag("DimensionGuard").hasKey("CanBeDisabled")||setCanBeDisabled)
+//					thisStack.stackTagCompound.getCompoundTag("DimensionGuard").setBoolean("CanBeDisabled", 
+//							DisabledHandler.canBeDisabled(GameRegistry.findUniqueIdentifierFor(thisStack.getItem()).toString(), thisStack.getItemDamage()));
+//				if(thisStack.stackTagCompound.getCompoundTag("DimensionGuard").getBoolean("CanBeDisabled")||thisStack.getItem()==ModItems.disable){
+//					if(!thisStack.stackTagCompound.getCompoundTag("DimensionGuard").hasKey("LastDimChecked"))
+//						thisStack.stackTagCompound.getCompoundTag("DimensionGuard").setInteger("LastDimChecked",Integer.MIN_VALUE);
+//					if(thisStack.stackTagCompound.getCompoundTag("DimensionGuard").getInteger("LastDimChecked")!=player.dimension){
+//						if (thisStack.getItem()==ModItems.disable){
+//							ItemStack storeStack = DisableItem.recoverItemStack(thisStack);
+//							//Logger.log(storeStack.getDisplayName());
+//							if (!DisabledHandler.isDisabled(GameRegistry.findUniqueIdentifierFor(storeStack.getItem()).toString(), storeStack.getItemDamage(),player.dimension)){
+//								player.inventory.setInventorySlotContents(i, storeStack);
+//							}
+//						}else{
+//							if (DisabledHandler.isDisabled(GameRegistry.findUniqueIdentifierFor(thisStack.getItem()).toString(), thisStack.getItemDamage(),player.dimension)){
+//								player.inventory.setInventorySlotContents(i, DisableItem.storeItem(new ItemStack(ModItems.disable,1), thisStack));
+//							}else{
+//								thisStack.stackTagCompound.getCompoundTag("DimensionGuard").setInteger("LastDimChecked",player.dimension);
+//							}
+//						}
+//					}
+//				}
+			}
+		}
+	}
+	
+	public static ItemStack scanStack(ItemStack thisStack, int dim, boolean setCanBeDisabled){
+		if(thisStack.stackTagCompound==null){
+			thisStack.stackTagCompound=new NBTTagCompound();
+		}
+		if(!thisStack.stackTagCompound.hasKey("DimensionGuard"))
+			thisStack.stackTagCompound.setTag("DimensionGuard", new NBTTagCompound());
+		if(!thisStack.stackTagCompound.getCompoundTag("DimensionGuard").hasKey("CanBeDisabled")||setCanBeDisabled)
+			thisStack.stackTagCompound.getCompoundTag("DimensionGuard").setBoolean("CanBeDisabled", 
+					DisabledHandler.canBeDisabled(GameRegistry.findUniqueIdentifierFor(thisStack.getItem()).toString(), thisStack.getItemDamage()));
+		if(thisStack.stackTagCompound.getCompoundTag("DimensionGuard").getBoolean("CanBeDisabled")||thisStack.getItem()==ModItems.disable){
+			if(!thisStack.stackTagCompound.getCompoundTag("DimensionGuard").hasKey("LastDimChecked"))
+				thisStack.stackTagCompound.getCompoundTag("DimensionGuard").setInteger("LastDimChecked",Integer.MIN_VALUE);
+			if(thisStack.stackTagCompound.getCompoundTag("DimensionGuard").getInteger("LastDimChecked")!=dim){
+				if (thisStack.getItem()==ModItems.disable){
+					ItemStack storeStack = DisableItem.recoverItemStack(thisStack);
+					//Logger.log(storeStack.getDisplayName());
+					if (!DisabledHandler.isDisabled(GameRegistry.findUniqueIdentifierFor(storeStack.getItem()).toString(), storeStack.getItemDamage(),dim)){
+						return storeStack;
+					}
+				}else{
+					if (DisabledHandler.isDisabled(GameRegistry.findUniqueIdentifierFor(thisStack.getItem()).toString(), thisStack.getItemDamage(),dim)){
+						return DisableItem.storeItem(new ItemStack(ModItems.disable,1), thisStack);
+					}else{
+						thisStack.stackTagCompound.getCompoundTag("DimensionGuard").setInteger("LastDimChecked",dim);
 					}
 				}
 			}
 		}
+		return thisStack;
 	}
 	
 	public static boolean isDisabledEntity(Class entityClass, int dim){

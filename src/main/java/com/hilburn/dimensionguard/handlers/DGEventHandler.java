@@ -4,6 +4,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent;
+import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent.Action;
 
@@ -47,8 +48,9 @@ public class DGEventHandler {
 	}
 	
 	@SubscribeEvent
-	public void spawnEvent(LivingSpawnEvent event){
-		//Logger.log((String)EntityList.classToStringMapping.get(event.entityLiving.getClass()));
+	public void itemPickupEvent(EntityItemPickupEvent event){
+		ItemStack stack = event.item.getEntityItem();
+		event.item.setEntityItemStack(DisabledHandler.scanStack(stack, event.entity.dimension, false));
 	}
 	
 	@SubscribeEvent 
