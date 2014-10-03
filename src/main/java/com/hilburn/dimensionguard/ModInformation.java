@@ -8,5 +8,5 @@ package com.hilburn.dimensionguard;
 public class ModInformation {
 	public static final String MODID = "dimensionguard";
 	public static final String NAME = "DimensionGuard";
-	public static final String VERSION = "0.9.2-1.7.10";
+	public static final String VERSION = "0.9.3-1.7.10";
 }

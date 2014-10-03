@@ -140,7 +140,16 @@ public class DisabledHandler {
 		for (int i=0;i<player.inventory.getSizeInventory();i++){
 			ItemStack thisStack=player.inventory.getStackInSlot(i);
 			if (thisStack!=null){
-				player.inventory.setInventorySlotContents(i, scanStack(thisStack,player.dimension,setCanBeDisabled));
+				if (i<36) player.inventory.setInventorySlotContents(i, scanStack(thisStack,player.dimension,setCanBeDisabled));
+				else{
+					ItemStack armourStack = scanStack(thisStack,player.dimension,setCanBeDisabled);
+					if (armourStack.getItem()==ModItems.disable)
+					{
+						player.inventory.setInventorySlotContents(i, null);
+						player.inventory.addItemStackToInventory(armourStack);
+					}
+					else player.inventory.setInventorySlotContents(i, armourStack);
+				}
 			}
 		}
 	}

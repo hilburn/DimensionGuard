@@ -7,6 +7,7 @@ import net.minecraftforge.event.entity.living.LivingSpawnEvent;
 import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
 import cpw.mods.fml.common.eventhandler.Event.Result;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import cpw.mods.fml.common.gameevent.PlayerEvent.PlayerChangedDimensionEvent;
 /**
  * DimensionGuard Mod
  * 
@@ -44,11 +45,17 @@ public class DGEventHandler {
 		if (DisabledHandler.isDisabledEntity(event.entityLiving.getClass(), event.entityLiving.dimension)) event.setResult(Result.DENY);
 	}
 	
+//	@SubscribeEvent
+//	public void JoinWorld(EntityJoinWorldEvent event){
+//		if (event.entity instanceof EntityPlayer && !event.world.isRemote){
+//			DisabledHandler.scanInventory((EntityPlayer)event.entity,false);
+//		}
+//	}
+	
 	@SubscribeEvent
-	public void JoinWorld(EntityJoinWorldEvent event){
-		if (event.entity instanceof EntityPlayer){
-			DisabledHandler.scanInventory((EntityPlayer)event.entity,true);
-		}
+	public void changeDimension(PlayerChangedDimensionEvent event)
+	{
+		DisabledHandler.scanInventory(event.player,false);
 	}
 	
 
