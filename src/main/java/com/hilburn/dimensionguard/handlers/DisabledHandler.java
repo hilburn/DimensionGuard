@@ -34,10 +34,7 @@ public class DisabledHandler {
 	private static ArrayList<String> registeredItems;
 	
 	public static void init(){
-		//Logger.log(EntityList.classToStringMapping.toString());
 		ConfigHandler.init(DimensionGuard.config);
-		//disabledBlocks = new ArrayList<Disabled>();
-		//registeredBlocks=new ArrayList<String>();
 		registeredItems=new ArrayList<String>();
 		
 //		for (Object key:GameData.getBlockRegistry().getKeys()){
@@ -149,29 +146,32 @@ public class DisabledHandler {
 	}
 	
 	public static ItemStack scanStack(ItemStack thisStack, int dim, boolean setCanBeDisabled){
-		if(thisStack.stackTagCompound==null){
-			thisStack.stackTagCompound=new NBTTagCompound();
-		}
-		if(!thisStack.stackTagCompound.hasKey("DimensionGuard"))
-			thisStack.stackTagCompound.setTag("DimensionGuard", new NBTTagCompound());
-		if(!thisStack.stackTagCompound.getCompoundTag("DimensionGuard").hasKey("CanBeDisabled")||setCanBeDisabled)
-			thisStack.stackTagCompound.getCompoundTag("DimensionGuard").setBoolean("CanBeDisabled", 
-					DisabledHandler.canBeDisabled(GameRegistry.findUniqueIdentifierFor(thisStack.getItem()).toString(), thisStack.getItemDamage()));
-		if(thisStack.stackTagCompound.getCompoundTag("DimensionGuard").getBoolean("CanBeDisabled")||thisStack.getItem()==ModItems.disable){
-			if(!thisStack.stackTagCompound.getCompoundTag("DimensionGuard").hasKey("LastDimChecked"))
-				thisStack.stackTagCompound.getCompoundTag("DimensionGuard").setInteger("LastDimChecked",Integer.MIN_VALUE);
-			if(thisStack.stackTagCompound.getCompoundTag("DimensionGuard").getInteger("LastDimChecked")!=dim){
-				if (thisStack.getItem()==ModItems.disable){
-					ItemStack storeStack = DisableItem.recoverItemStack(thisStack);
-					//Logger.log(storeStack.getDisplayName());
-					if (!DisabledHandler.isDisabled(GameRegistry.findUniqueIdentifierFor(storeStack.getItem()).toString(), storeStack.getItemDamage(),dim)){
-						return storeStack;
-					}
-				}else{
-					if (DisabledHandler.isDisabled(GameRegistry.findUniqueIdentifierFor(thisStack.getItem()).toString(), thisStack.getItemDamage(),dim)){
-						return DisableItem.storeItem(new ItemStack(ModItems.disable,1), thisStack);
+		if (thisStack!=null&&thisStack.getItem()!=null)
+		{
+			if(thisStack.stackTagCompound==null){
+				thisStack.stackTagCompound=new NBTTagCompound();
+			}
+			if(!thisStack.stackTagCompound.hasKey("DimensionGuard"))
+				thisStack.stackTagCompound.setTag("DimensionGuard", new NBTTagCompound());
+			if(!thisStack.stackTagCompound.getCompoundTag("DimensionGuard").hasKey("CanBeDisabled")||setCanBeDisabled)
+				thisStack.stackTagCompound.getCompoundTag("DimensionGuard").setBoolean("CanBeDisabled", 
+						DisabledHandler.canBeDisabled(GameRegistry.findUniqueIdentifierFor(thisStack.getItem()).toString(), thisStack.getItemDamage()));
+			if(thisStack.stackTagCompound.getCompoundTag("DimensionGuard").getBoolean("CanBeDisabled")||thisStack.getItem()==ModItems.disable){
+				if(!thisStack.stackTagCompound.getCompoundTag("DimensionGuard").hasKey("LastDimChecked"))
+					thisStack.stackTagCompound.getCompoundTag("DimensionGuard").setInteger("LastDimChecked",Integer.MIN_VALUE);
+				if(thisStack.stackTagCompound.getCompoundTag("DimensionGuard").getInteger("LastDimChecked")!=dim){
+					if (thisStack.getItem()==ModItems.disable){
+						ItemStack storeStack = DisableItem.recoverItemStack(thisStack);
+						//Logger.log(storeStack.getDisplayName());
+						if (!DisabledHandler.isDisabled(GameRegistry.findUniqueIdentifierFor(storeStack.getItem()).toString(), storeStack.getItemDamage(),dim)){
+							return storeStack;
+						}
 					}else{
-						thisStack.stackTagCompound.getCompoundTag("DimensionGuard").setInteger("LastDimChecked",dim);
+						if (DisabledHandler.isDisabled(GameRegistry.findUniqueIdentifierFor(thisStack.getItem()).toString(), thisStack.getItemDamage(),dim)){
+							return DisableItem.storeItem(new ItemStack(ModItems.disable,1), thisStack);
+						}else{
+							thisStack.stackTagCompound.getCompoundTag("DimensionGuard").setInteger("LastDimChecked",dim);
+						}
 					}
 				}
 			}

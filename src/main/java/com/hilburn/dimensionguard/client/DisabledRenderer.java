@@ -7,6 +7,8 @@ import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.RenderItem;
+import net.minecraft.client.renderer.entity.RenderManager;
+import net.minecraft.client.renderer.entity.RenderPlayer;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
@@ -120,9 +122,13 @@ public class DisabledRenderer implements IItemRenderer {
 		            {
 		            case EQUIPPED_FIRST_PERSON:
 		            	//TODO: get items to render in the right place
+		            	GL11.glRotated(90F, 0F, 1F, 0F);
+		            	GL11.glTranslatef(-1F, 0.5F, 0F);
+		            	break;
 		            case EQUIPPED:
 		            	GL11.glRotated(90F, 0F, 1F, 0F);
-		            	GL11.glTranslatef(-0.8F, 0.7F, -0.8F);
+		            	GL11.glTranslatef(-1F, 0.5F, 0F);
+		            	GL11.glRotated(90F, 1F, 0F, 0F);
 		                //GL11.glTranslatef(0, -4 / 16f, 0);
 		                break;
 		            case ENTITY:
