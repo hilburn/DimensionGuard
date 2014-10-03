@@ -17,7 +17,8 @@ entity name, dimension list
 
 Wildcards
 --------------
-For IDs, names and metadata the wildcard * selects for "any match" so for example "\*spider" will select both Spider and CaveSpider, whereas "spider\*" will only select Spider
+For IDs, names and metadata the wildcard \* selects for "any match" so for example "\*spider" will select both Spider and CaveSpider, whereas "spider\*" will only select Spider.
+
 For Dimensions you can define single dimensions (0), ranges (0:5), and use the ++ or -- wildcards to signify more or less than the preceding number (eg 1++)
 
 
