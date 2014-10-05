@@ -160,6 +160,10 @@ public class DisabledHandler {
 			if(thisStack.stackTagCompound==null){
 				thisStack.stackTagCompound=new NBTTagCompound();
 			}
+			if(GameRegistry.findUniqueIdentifierFor(thisStack.getItem())==null){
+				//TODO: Handle this case
+				return thisStack;
+			}
 			if(!thisStack.stackTagCompound.hasKey("DimensionGuard"))
 				thisStack.stackTagCompound.setTag("DimensionGuard", new NBTTagCompound());
 			if(!thisStack.stackTagCompound.getCompoundTag("DimensionGuard").hasKey("CanBeDisabled")||setCanBeDisabled)
