@@ -3,9 +3,9 @@ package dimensionguard.handlers;
 import java.util.*;
 import java.util.regex.Pattern;
 
-import cpw.mods.fml.common.ObfuscationReflectionHelper;
 import cpw.mods.fml.relauncher.ReflectionHelper;
 import dimensionguard.items.DisabledRecipe;
+import dimensionguard.nei.NEIDimensionGuardConfig;
 import net.minecraft.entity.EntityList;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -51,7 +51,9 @@ public class DisabledHandler {
 				if (output == null || output.getItem() == null) continue;
 				if (isDisabledStack(output))
 				{
-					recipes.add(new DisabledRecipe(recipe));
+					DisabledRecipe newRecipe = new DisabledRecipe(recipe);
+					recipes.add(newRecipe);
+					NEIDimensionGuardConfig.disabledRecipes.add(newRecipe);
 				}
 				else recipes.add(recipe);
 			}

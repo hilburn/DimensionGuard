@@ -1,6 +1,5 @@
 package dimensionguard.items;
 
-import dimensionguard.disabled.Disabled;
 import dimensionguard.handlers.DisabledHandler;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
@@ -39,5 +38,10 @@ public class DisabledRecipe implements IRecipe
     public ItemStack getRecipeOutput()
     {
         return recipe.getRecipeOutput();
+    }
+
+    public IRecipe getRecipe()
+    {
+        return recipe;
     }
 }
