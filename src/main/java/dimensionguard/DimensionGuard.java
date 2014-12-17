@@ -8,14 +8,13 @@ import cpw.mods.fml.common.event.FMLLoadCompleteEvent;
 import dimensionguard.handlers.EventHandler;
 import dimensionguard.handlers.DisabledHandler;
 import dimensionguard.handlers.CommonEventHandler;
-import dimensionguard.proxies.CommonProxy;
+import dimensionguard.reference.Metadata;
 import dimensionguard.reference.Reference;
 import net.minecraftforge.common.MinecraftForge;
 
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.Instance;
-import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
@@ -36,13 +35,10 @@ public class DimensionGuard {
 	@Mod.Metadata(Reference.ID)
 	public static ModMetadata metadata;
 
-	@SidedProxy(clientSide="dimensionguard.proxies.ClientProxy", serverSide="dimensionguard.proxies.CommonProxy")
-	public static CommonProxy proxy;
-
-
 	@Mod.EventHandler
 	public void preInit(FMLPreInitializationEvent event){
 		config=event.getSuggestedConfigurationFile();
+		metadata = Metadata.init(metadata);
 	}
 	
 	@Mod.EventHandler
