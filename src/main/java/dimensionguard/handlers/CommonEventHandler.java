@@ -16,10 +16,17 @@ import java.util.ArrayList;
 public class CommonEventHandler
 {
     @SubscribeEvent
-    public void teleportEvent(PlayerEvent.PlayerChangedDimensionEvent event)
-    {
-        EntityPlayer player = event.player;
-        NBTTagCompound persisted = event.player.getEntityData().getCompoundTag(player.PERSISTED_NBT_TAG);
+    public void teleportEvent(PlayerEvent.PlayerChangedDimensionEvent event){
+        guardInventory(event.player, event.toDim);
+    }
+    
+    @SubscribeEvent
+    public void respawnPlayer(PlayerEvent.PlayerRespawnEvent event){
+    	guardInventory(event.player, event.player.dimension);
+    }
+    
+    private void guardInventory(EntityPlayer player, int dimension){
+    	NBTTagCompound persisted = player.getEntityData().getCompoundTag(player.PERSISTED_NBT_TAG);
         NBTTagList disabled = new NBTTagList();
         if (!persisted.hasNoTags())
         {
@@ -29,7 +36,7 @@ public class CommonEventHandler
             {
                 NBTTagCompound stackCompound = disabledItems.getCompoundTagAt(i);
                 ItemStack stack = ItemStack.loadItemStackFromNBT(stackCompound);
-                if (DisabledHandler.isDisabledStack(stack, event.toDim))
+                if (DisabledHandler.isDisabledStack(stack, dimension))
                 {
                     disabled.appendTag(stackCompound);
                 }
@@ -47,7 +54,7 @@ public class CommonEventHandler
         {
             ItemStack stack = player.inventory.getStackInSlot(i);
             if (stack==null || stack.getItem()==null) continue;
-            if (DisabledHandler.isDisabledStack(stack, event.toDim))
+            if (DisabledHandler.isDisabledStack(stack, dimension))
             {
                 disabled.appendTag(stack.writeToNBT(new NBTTagCompound()));
                 player.inventory.setInventorySlotContents(i,null);
