@@ -1,1 +1,3 @@
-item.disable.name=Disabled Item
+dg.enabled.description=Enabled
+dg.disabled.description=Disabled
+dg.dimensionDisabled.description=is disabled in this dimension

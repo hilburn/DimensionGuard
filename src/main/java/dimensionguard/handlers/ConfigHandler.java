@@ -1,4 +1,4 @@
-package com.hilburn.dimensionguard.handlers;
+package dimensionguard.handlers;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -30,9 +30,9 @@ public class ConfigHandler {
 		config.load();
 		//============================Blocks and Items========================
 		ConfigCategory blocksAndItems = config.getCategory("blocks and items");
-		blocksAndItems.setComment("Format is 'modid:block/item(:meta/damage optional)' followed by a comma delimited list of dimensions\n"
+		blocksAndItems.setComment("Format is 'modid:block/item(:damage/damage optional)' followed by a comma delimited list of dimensions\n"
 							+	"A blank metadata/damage field defaults to 0, alternatively * can be used as a wildcard in modid or \n"
-							+ 	"the object name to select multiple blocks, and in the meta/damage to select all values\n"
+							+ 	"the object name to select multiple blocks, and in the damage/damage to select all values\n"
 							+ 	"eg '*:*wool:*' selects every block with 'wool' in it's unlocalized name from any mod in every colour\n"
 							+ 	"Dimensions can be defined as single dimensions (0), ranges (0:5), and more than or less than (0++/1--)");
 
@@ -61,9 +61,7 @@ public class ConfigHandler {
 		whiteEntityP.comment = "Entity name and dimension(s) whitelisted - add each new element on a separate line.\n"
 							+ "Format is 'entity name,dim1...'";
 		entityWhitelist.addAll(Arrays.asList(whiteEntityP.getStringList()));
-		
 
-		
 		config.save();
 	}
 }

@@ -1,4 +1,4 @@
-package com.hilburn.dimensionguard;
+package dimensionguard.utils;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ChatComponentText;

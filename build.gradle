@@ -1,63 +1,98 @@
 buildscript {
     repositories {
         mavenCentral()
+		jcenter()
         maven {
             name = "forge"
             url = "http://files.minecraftforge.net/maven"
         }
         maven {
+            // Add maven repo for SpecialSource
             name = "sonatype"
             url = "https://oss.sonatype.org/content/repositories/snapshots/"
         }
     }
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:1.2-SNAPSHOT'
+		classpath 'net.minecraftforge.gradle:ForgeGradle:1.2-SNAPSHOT'
+		classpath 'de.undercouch:gradle-download-task:1.1'
     }
 }
 
+apply plugin: 'scala'
 apply plugin: 'forge'
+apply plugin: 'idea'
+apply plugin: 'maven'
+apply plugin: 'maven-publish'
+apply plugin: 'download-task'
 
-version = "0.9.3-1.7.10"
-group= "com.hilburn.dimensionguard" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
-archivesBaseName = "DimensionGuard"
+ext.buildProps = file "build.properties"
 
-minecraft {
-    version = "1.7.10-10.13.0.1208"
-    assetDir = "eclipse/assets"
+buildProps.withReader {
+    def prop = new Properties()
+    prop.load(it)
+    ext.config = new ConfigSlurper().parse prop
+}
+
+repositories {
+    maven {
+	name = "forge"
+	url = "http://files.minecraftforge.net/maven"
+    }
+    maven { // the repo from which to get NEI and stuff
+	name 'CB Repo'
+	url "http://chickenbones.net/maven"
+    }
+    ivy {
+	name 'FMP'
+	artifactPattern "http://files.minecraftforge.net/[module]/[module]-dev-[revision].[ext]"
+    }
 }
 
 dependencies {
-    // you may put jars on which you depend on in ./libs
-    // or you may define them like so..
-    //compile "some.group:artifact:version:classifier"
-    //compile "some.group:artifact:version"
-      
-    // real examples
-    //compile 'com.mod-buildcraft:buildcraft:6.0.8:dev'  // adds buildcraft to the dev env
-    //compile 'com.googlecode.efficient-java-matrix-library:ejml:0.24' // adds ejml to the dev env
-
-    // for more info...
-    // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html
-    // http://www.gradle.org/docs/current/userguide/dependency_management.html
-
+	compile fileTree(dir: 'lib', include: '*.jar')
 }
 
-processResources
-{
-    // this will ensure that this task is redone when the versions change.
-    inputs.property "version", project.version
-    inputs.property "mcversion", project.minecraft.version
+group = "DimensionGuard"
+archivesBaseName = "DimensionGuard"
 
-    // replace stuff in mcmod.info, nothing else
-    from(sourceSets.main.resources.srcDirs) {
-        include 'mcmod.info'
-                
-        // replace version and mcversion
-        expand 'version':project.version, 'mcversion':project.minecraft.version
+minecraft {
+    version = "${config.version.minecraft}-${config.version.forge}"
+
+    replaceIn "reference/Reference.java"
+    replace "@MAJOR@", config.version.mod.major
+    replace "@MINOR@", config.version.mod.minor
+    replace "@REVIS@", config.version.mod.revis
+}
+
+processResources {
+    from 'build.properties'
+}
+
+allprojects {
+    version = "${config.version.minecraft}-${config.version.mod.major}.${config.version.mod.minor}.${config.version.mod.revis}"
+
+    jar {
+        dependsOn ":copyBuildXml"
+        destinationDir = file (rootProject.getRootDir().getPath() + '/output')
     }
-        
-    // copy everything else, thats not the mcmod.info
-    from(sourceSets.main.resources.srcDirs) {
-        exclude 'mcmod.info'
+
+    publishing {
+        publications {
+            mavenJava(MavenPublication) {
+                artifact jar
+            }
+        }
+        repositories {
+            maven {
+                url "file://var/www/maven"
+            }
+        }
     }
 }
+
+task copyBuildXml(type: Copy) {
+    from 'build.properties'
+    into 'output'
+}
+
+build.dependsOn "copyBuildXml"

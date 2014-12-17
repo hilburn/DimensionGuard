@@ -1,4 +1,4 @@
-package com.hilburn.dimensionguard.disabled;
+package dimensionguard.disabled;
 
 import java.util.ArrayList;
 
@@ -11,13 +11,15 @@ import net.minecraft.item.Item;
  **/
 public class Disabled {
 	protected Item item;
-	protected int meta;
+	protected int damage;
 	protected ArrayList<Integer> dimensions = new ArrayList<Integer>();
 	protected boolean blacklist;
-	public Disabled(Item disable, String metadata, String[] dim, boolean isBlacklist){
+
+
+	public Disabled(Item disable, String damage, String[] dim, boolean isBlacklist){
 		item=disable;
-		meta=safeParseInt(metadata);
-		if (meta<-1)meta=0;
+		this.damage =safeParseInt(damage);
+		if (this.damage <-1) this.damage =0;
 		blacklist=isBlacklist;
 		getDimensions(dim);
 	}
@@ -28,8 +30,8 @@ public class Disabled {
 	}
 	
 	public Disabled(String metadata, String[] dim, boolean isBlacklist){
-		meta=safeParseInt(metadata);
-		if (meta<-1)meta=0;
+		damage =safeParseInt(metadata);
+		if (damage <-1) damage =0;
 		blacklist=isBlacklist;
 		getDimensions(dim);
 	}
@@ -70,19 +72,23 @@ public class Disabled {
 		dimensions.add(b);
 	}
 	
-	public boolean isDisabled(int dim){
+	public boolean dimensionMatch(int dim){
 		for (int i=0;i<dimensions.size();i+=2){
 			if (dimensions.get(i)<=dim && dim<=dimensions.get(i+1)) return !(true^blacklist);
 		}
 		return !(false^blacklist);
 	}
-	
-	public boolean metaMatch(int metadata){
-		if (meta==-1||meta==metadata)return true;
+
+	public boolean isDisabled(int damage, int dim){
+		return damageMatch(damage) && dimensionMatch(dim);
+	}
+
+	public boolean damageMatch(int damage){
+		if (this.damage ==-1|| this.damage ==damage)return true;
 		return false;
 	}
 	
 	public Item getItem(){return item;}
-	public int getMeta(){return meta;}
+	public int getDamage(){return damage;}
 	public boolean isEmpty(){return dimensions.isEmpty();}
 }

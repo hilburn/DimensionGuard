@@ -1,27 +1,61 @@
-*.msp
+## General stuff to keep the repo clean
 *.class
-/asm/
-/eclipse/
-/.gradle/
-/.metadata/
-/.settings/
-/assets/
-/bin/
-/build/
-/config/
-/crash-reports/
-/logs/
-/lib/
-/mods/
-/resourcepacks/
-/saves/
+dist
+download
+.DS_Store
+push.sh
+remotebuild.py
+CREDITS-fml.txt
+options.txt
+MinecraftForge-Credits.txt
+MinecraftForge-License.txt
+lib/Mekanism*
+lib/Universal*
+lib/1.6.4/
+._*
+*.txt
+*.log
+*.json
+
+## gradle
+/.gradle
+/build
+/eclipse
+## ForgeGradle
+/run
+/out
+
+## idea
+/.idea
+*.iml
+*.ipr
+*.iws
+
+## eclipse
+/.settings
+/.metadata
 /.classpath
 /.project
-/options.txt
-/screenshots
-/*.txt
-*.zip
-*.psd
-/server.properties
-/world
+/bin
 
+## netbeans
+.nb*
+/nbproject/private/
+/nbbuild/
+output/
+gradlew
+gradlew.bat
+gradle/
+install.bat
+.cache
+build.xml
+natives/
+nbproject/
+
+## minecraft
+/config/
+/mods/
+/saves/
+/logs/
+/crash-reports/
+/screenshots/
