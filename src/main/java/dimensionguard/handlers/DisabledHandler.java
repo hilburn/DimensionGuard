@@ -3,6 +3,7 @@ package dimensionguard.handlers;
 import java.util.*;
 import java.util.regex.Pattern;
 
+import cpw.mods.fml.common.ObfuscationReflectionHelper;
 import cpw.mods.fml.relauncher.ReflectionHelper;
 import dimensionguard.items.DisabledRecipe;
 import net.minecraft.entity.EntityList;
@@ -55,7 +56,15 @@ public class DisabledHandler {
 				else recipes.add(recipe);
 			}
 		}
-		ReflectionHelper.setPrivateValue(CraftingManager.class, CraftingManager.getInstance(),recipes,"recipes");
+		try
+		{
+			ReflectionHelper.setPrivateValue(CraftingManager.class, CraftingManager.getInstance(), recipes, "recipes");
+		}
+		catch (Exception e)
+		{
+			ReflectionHelper.setPrivateValue(CraftingManager.class, CraftingManager.getInstance(), recipes, "field_77597_b");
+		}
+
 	}
 
 	private static void addDisabledItems(boolean blacklist){
