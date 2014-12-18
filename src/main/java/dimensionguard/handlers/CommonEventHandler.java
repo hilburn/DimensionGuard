@@ -2,6 +2,8 @@ package dimensionguard.handlers;
 
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.PlayerEvent;
+import cpw.mods.fml.common.gameevent.TickEvent;
+import cpw.mods.fml.relauncher.Side;
 import dimensionguard.reference.Names;
 import dimensionguard.utils.StackUtils;
 import net.minecraft.entity.player.EntityPlayer;
@@ -24,11 +26,26 @@ public class CommonEventHandler
     public void respawnPlayer(PlayerEvent.PlayerRespawnEvent event){
     	guardInventory(event.player, event.player.dimension);
     }
-    
-    private void guardInventory(EntityPlayer player, int dimension){
+
+    @SubscribeEvent
+    public void playerTickHandler(TickEvent.PlayerTickEvent event)
+    {
+        if (event.phase == TickEvent.Phase.START)
+        {
+            EntityPlayer player = event.player;
+            if (player.openContainer!=null) guardInventory(player,player.dimension,event.side,true);
+        }
+    }
+
+    private void guardInventory(EntityPlayer player, int dimension)
+    {
+        guardInventory(player,dimension,Side.SERVER,false);
+    }
+
+    private void guardInventory(EntityPlayer player, int dimension, Side side, boolean removeOnly){
     	NBTTagCompound persisted = player.getEntityData().getCompoundTag(player.PERSISTED_NBT_TAG);
-        NBTTagList disabled = new NBTTagList();
-        if (!persisted.hasNoTags())
+        NBTTagList disabled = removeOnly? persisted.getTagList(Names.NBTTag, 10):new NBTTagList();
+        if (!persisted.hasNoTags() && !removeOnly)
         {
             ArrayList<String> enabledItems = new ArrayList<String>();
             NBTTagList disabledItems = persisted.getTagList(Names.NBTTag, 10);
@@ -56,9 +73,12 @@ public class CommonEventHandler
             if (stack==null || stack.getItem()==null) continue;
             if (DisabledHandler.isDisabledStack(stack, dimension))
             {
-                disabled.appendTag(stack.writeToNBT(new NBTTagCompound()));
+                if (side == Side.SERVER)
+                {
+                    disabled.appendTag(stack.writeToNBT(new NBTTagCompound()));
+                    if (!disabledItems.contains(stack.getDisplayName())) disabledItems.add(stack.getDisplayName());
+                }
                 player.inventory.setInventorySlotContents(i,null);
-                if (!disabledItems.contains(stack.getDisplayName())) disabledItems.add(stack.getDisplayName());
             }
         }
         if (disabledItems.size()>0)

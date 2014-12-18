@@ -3,21 +3,21 @@ package dimensionguard;
 
 import java.io.File;
 
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.ModMetadata;
 import cpw.mods.fml.common.event.FMLLoadCompleteEvent;
-import dimensionguard.handlers.EventHandler;
-import dimensionguard.handlers.DisabledHandler;
 import dimensionguard.handlers.CommonEventHandler;
+import dimensionguard.handlers.DisabledHandler;
+import dimensionguard.handlers.EventHandler;
 import dimensionguard.reference.Metadata;
 import dimensionguard.reference.Reference;
-import net.minecraftforge.common.MinecraftForge;
 
-import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.Instance;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.common.MinecraftForge;
 
 
 @Mod(modid = Reference.ID, name = Reference.NAME, version = Reference.VERSION_FULL)
