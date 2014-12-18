@@ -3,6 +3,8 @@ package dimensionguard.handlers;
 import java.util.*;
 import java.util.regex.Pattern;
 
+import com.google.common.collect.Table;
+import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.ReflectionHelper;
 import dimensionguard.items.DisabledRecipe;
 import dimensionguard.nei.NEIDimensionGuardConfig;
@@ -32,8 +34,16 @@ public class DisabledHandler {
 	public static void init(){
 		ConfigHandler.init(DimensionGuard.config);
 
-		addDisabledItems(true);
-		addDisabledItems(false);
+		Table<String,String,ItemStack> customStacks = ReflectionHelper.getPrivateValue(GameData.class,null,"customItemStacks");
+		Map<String,ItemStack> customItemStacks = new LinkedHashMap<String, ItemStack>();
+
+		for (Table.Cell<String, String,ItemStack> cell: customStacks.cellSet())
+		{
+			customItemStacks.put(cell.getColumnKey()+":"+cell.getRowKey(),cell.getValue());
+		}
+
+		addDisabledItems(true, customItemStacks);
+		addDisabledItems(false, customItemStacks);
 		addDisabledEntity(true);
 		addDisabledEntity(false);
 		disableRecipes();
@@ -69,7 +79,7 @@ public class DisabledHandler {
 
 	}
 
-	private static void addDisabledItems(boolean blacklist){
+	private static void addDisabledItems(boolean blacklist, Map<String,ItemStack> customItemStacks){
 		ArrayList<String> strings = blacklist?ConfigHandler.blackList:ConfigHandler.whiteList;
 		String[] splitString;
 		String[] dimensions;
@@ -92,14 +102,28 @@ public class DisabledHandler {
 			ArrayList<Item> matches = new ArrayList<Item>();
 			if (itemID.contains("*"))itemID=itemID.replaceAll("\\*", ".*");
 			Pattern blockPattern = Pattern.compile(itemID,Pattern.CASE_INSENSITIVE);
+			Disabled newDisabled = new Disabled(damage,dimensions,blacklist);
+
 			for (Object key:GameData.getItemRegistry().getKeys()){
 				if (blockPattern.matcher(key.toString()).matches())
 				{
 					matches.add(GameData.getItemRegistry().getObject(key.toString()));
 				}
 			}
+
+			for (Map.Entry<String,ItemStack> entry:customItemStacks.entrySet())
+			{
+				if (blockPattern.matcher(entry.getKey()).matches())
+				{
+					ItemStack value = entry.getValue();
+					if (value == null || value.getItem() == null) continue;
+					Item stackItem = value.getItem();
+					if (newDisabled.damageMatch(value.getItemDamage()) && !matches.contains(stackItem))
+						matches.add(stackItem);
+				}
+			}
+
 			if (matches.isEmpty())Logger.log(itemID+" has no registered matches");
-			Disabled newDisabled = new Disabled(damage,dimensions,blacklist);
 			for (Item match:matches){
 				ArrayList<Disabled> temp = new ArrayList<Disabled>(Arrays.asList(newDisabled));
 				if (disabledItemHash.get(match)!=null)temp.addAll(disabledItemHash.get(match));
