@@ -1,12 +1,12 @@
 package dimensionguard.handlers;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-
 import net.minecraftforge.common.config.ConfigCategory;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * DimensionGuard Mod
@@ -20,6 +20,7 @@ public class ConfigHandler {
 	public static ArrayList<String> entityBlacklist;
 	public static ArrayList<String> entityWhitelist;
 	public static boolean dropDisabledItems = true;
+	public static boolean creativeOverride;
 
 	public static void init(File file)
 	{

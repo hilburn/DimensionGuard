@@ -1,24 +1,25 @@
 package dimensionguard.handlers;
 
+import com.google.common.collect.Table;
+import cpw.mods.fml.common.registry.GameData;
+import cpw.mods.fml.relauncher.ReflectionHelper;
+import dimensionguard.DimensionGuard;
+import dimensionguard.disabled.Disabled;
+import dimensionguard.utils.Logger;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.entity.RenderItem;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityList;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.IIcon;
+import net.minecraft.world.World;
+import org.lwjgl.opengl.GL11;
+
 import java.util.*;
 import java.util.regex.Pattern;
-
-import com.google.common.collect.Table;
-import cpw.mods.fml.common.registry.GameRegistry;
-import cpw.mods.fml.relauncher.ReflectionHelper;
-import dimensionguard.items.DisabledRecipe;
-import dimensionguard.nei.NEIDimensionGuardConfig;
-import net.minecraft.entity.EntityList;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-
-import dimensionguard.DimensionGuard;
-import dimensionguard.utils.Logger;
-import dimensionguard.disabled.Disabled;
-
-import cpw.mods.fml.common.registry.GameData;
-import net.minecraft.item.crafting.CraftingManager;
-import net.minecraft.item.crafting.IRecipe;
 
 /**
  * DimensionGuard Mod
@@ -30,11 +31,18 @@ import net.minecraft.item.crafting.IRecipe;
 public class DisabledHandler {
 	public static Map<Item,ArrayList<Disabled>> disabledItemHash = new HashMap<Item, ArrayList<Disabled>>();
 	public static Map<Class,ArrayList<Disabled>> disabledEntityHash = new HashMap<Class, ArrayList<Disabled>>();
-	
+	public static RenderItem renderItem = new RenderItem();
+	public static IIcon lockedIcon;
+
+	DisabledHandler()
+	{
+		renderItem.zLevel = 500.0F;
+	}
+
 	public static void init(){
 		ConfigHandler.init(DimensionGuard.config);
 
-		Table<String,String,ItemStack> customStacks = ReflectionHelper.getPrivateValue(GameData.class,null,"customItemStacks");
+		Table<String,String,ItemStack> customStacks = ReflectionHelper.getPrivateValue(GameData.class, null, "customItemStacks");
 		Map<String,ItemStack> customItemStacks = new LinkedHashMap<String, ItemStack>();
 
 		for (Table.Cell<String, String,ItemStack> cell: customStacks.cellSet())
@@ -46,41 +54,10 @@ public class DisabledHandler {
 		addDisabledItems(false, customItemStacks);
 		addDisabledEntity(true);
 		addDisabledEntity(false);
-		disableRecipes();
-	}
-
-	private static void disableRecipes()
-	{
-		ArrayList<IRecipe> recipes = new ArrayList<IRecipe>();
-		for (Iterator<IRecipe> itr = CraftingManager.getInstance().getRecipeList().iterator(); itr.hasNext();)
-		{
-			IRecipe recipe = itr.next();
-			if (!(recipe instanceof DisabledRecipe))
-			{
-				ItemStack output = recipe.getRecipeOutput();
-				if (output == null || output.getItem() == null) continue;
-				if (isDisabledStack(output))
-				{
-					DisabledRecipe newRecipe = new DisabledRecipe(recipe);
-					recipes.add(newRecipe);
-					NEIDimensionGuardConfig.disabledRecipes.add(newRecipe);
-				}
-				else recipes.add(recipe);
-			}
-		}
-		try
-		{
-			ReflectionHelper.setPrivateValue(CraftingManager.class, CraftingManager.getInstance(), recipes, "recipes");
-		}
-		catch (Exception e)
-		{
-			ReflectionHelper.setPrivateValue(CraftingManager.class, CraftingManager.getInstance(), recipes, "field_77597_b");
-		}
-
 	}
 
 	private static void addDisabledItems(boolean blacklist, Map<String,ItemStack> customItemStacks){
-		ArrayList<String> strings = blacklist?ConfigHandler.blackList:ConfigHandler.whiteList;
+		ArrayList<String> strings = blacklist? ConfigHandler.blackList: ConfigHandler.whiteList;
 		String[] splitString;
 		String[] dimensions;
 		for (String disableItem: strings){
@@ -104,7 +81,7 @@ public class DisabledHandler {
 			Pattern blockPattern = Pattern.compile(itemID,Pattern.CASE_INSENSITIVE);
 			Disabled newDisabled = new Disabled(damage,dimensions,blacklist);
 
-			for (Object key:GameData.getItemRegistry().getKeys()){
+			for (Object key: GameData.getItemRegistry().getKeys()){
 				if (blockPattern.matcher(key.toString()).matches())
 				{
 					matches.add(GameData.getItemRegistry().getObject(key.toString()));
@@ -133,7 +110,7 @@ public class DisabledHandler {
 	}
 
 	private static void addDisabledEntity(boolean blacklist){
-		ArrayList<String> strings = blacklist?ConfigHandler.entityBlacklist:ConfigHandler.entityWhitelist;
+		ArrayList<String> strings = blacklist? ConfigHandler.entityBlacklist: ConfigHandler.entityWhitelist;
 		String[] splitString;
 		String[] dimensions;
 		for (String disableEntity: strings){
@@ -147,14 +124,14 @@ public class DisabledHandler {
 			ArrayList<String> wildcardMatch=new ArrayList<String>();
 			if (entityID.contains("*"))entityID=entityID.replaceAll("\\*", ".*");
 			Pattern entityPattern = Pattern.compile(entityID,Pattern.CASE_INSENSITIVE);
-			for (Object entity:EntityList.stringToClassMapping.keySet()){
+			for (Object entity: EntityList.stringToClassMapping.keySet()){
 				if (entityPattern.matcher((String)entity).matches()) wildcardMatch.add((String)entity);
 			}
 			Disabled newDisabled = new Disabled(dimensions,blacklist);
 			for (String match:wildcardMatch){
 				ArrayList<Disabled> temp = new ArrayList<Disabled>(Arrays.asList(newDisabled));
 				if (disabledEntityHash.get(match)!=null)temp.addAll(disabledEntityHash.get(match));
-				disabledEntityHash.put((Class)EntityList.stringToClassMapping.get(match), temp);
+				disabledEntityHash.put((Class) EntityList.stringToClassMapping.get(match), temp);
 			}
 		}
 	}
@@ -170,8 +147,33 @@ public class DisabledHandler {
 		return false;
 	}
 
+	public static boolean isDisabledStack(EntityPlayer entityPlayer)
+	{
+		return isDisabledStack(entityPlayer,entityPlayer.worldObj,entityPlayer.getCurrentEquippedItem());
+	}
+
+	public static boolean isDisabledStack(EntityPlayer player, ItemStack stack)
+	{
+		return isDisabledStack(player,player.worldObj.provider.dimensionId,stack);
+	}
+
+	public static boolean isDisabledStack(EntityPlayer player, World world, ItemStack stack)
+	{
+		return isDisabledStack(player,world.provider.dimensionId,stack);
+	}
+
+	public static boolean isDisabledStack(EntityPlayer player, int dim, ItemStack stack)
+	{
+		if (ConfigHandler.creativeOverride)
+		{
+			if (player.capabilities.isCreativeMode) return false;
+		}
+		return (isDisabledStack(stack, dim));
+	}
+
 	public static boolean isDisabledStack(ItemStack stack, int dim)
 	{
+		if (stack==null) return false;
 		ArrayList<Disabled> disabled = disabledItemHash.get(stack.getItem());
 		if (disabled==null) return false;
 		for (Disabled check: disabled)
@@ -181,6 +183,14 @@ public class DisabledHandler {
 		return false;
 	}
 
+	public static boolean isValidArmour(ItemStack itemStack, Entity entity)
+	{
+		if (ConfigHandler.creativeOverride && entity instanceof EntityPlayer)
+		{
+			if (((EntityPlayer)entity).capabilities.isCreativeMode) return true;
+		}
+		return !isDisabledStack(itemStack, entity.worldObj.provider.dimensionId);
+	}
 
 	public static boolean isDisabledEntity(Class entityClass, int dim){
 		ArrayList<Disabled> disabled = disabledEntityHash.get(entityClass);
@@ -188,5 +198,26 @@ public class DisabledHandler {
 			for (Disabled set:disabled)if (set.dimensionMatch(dim))return true;
 		}
 		return false;
+	}
+
+	public static void disabledRender(RenderItem itemRender, ItemStack stack, int i, int j)
+	{
+		IIcon icon = lockedIcon;
+		GL11.glPushMatrix();
+		if (stack.getItem() instanceof ItemBlock)
+		{
+			//GL11.glScalef(0.1F,0.1F,0.1F);
+
+		}
+		GL11.glEnable(GL11.GL_BLEND);
+		Tessellator tessellator = Tessellator.instance;
+		tessellator.startDrawingQuads();
+		tessellator.addVertexWithUV((double)(i + 0), (double)(j + 16), 500F, (double)icon.getMinU(), (double)icon.getMaxV());
+		tessellator.addVertexWithUV((double)(i + 16), (double)(j + 16), 500F, (double)icon.getMaxU(), (double)icon.getMaxV());
+		tessellator.addVertexWithUV((double)(i + 16), (double)(j + 0), 500F, (double)icon.getMaxU(), (double)icon.getMinV());
+		tessellator.addVertexWithUV((double)(i + 0), (double)(j + 0), 500F, (double)icon.getMinU(), (double)icon.getMinV());
+		tessellator.draw();
+		GL11.glDisable(GL11.GL_BLEND);
+		GL11.glPopMatrix();
 	}
 }

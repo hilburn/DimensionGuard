@@ -1,15 +1,17 @@
 package dimensionguard.disabled;
 
+import net.minecraft.item.Item;
+
 import java.util.ArrayList;
 
-import net.minecraft.item.Item;
 /**
  * DimensionGuard Mod
  * 
  * @author Charlie Paterson
  * @license GNU General Public License v3
  **/
-public class Disabled {
+public class Disabled
+{
 	protected Item item;
 	protected int damage;
 	protected ArrayList<Integer> dimensions = new ArrayList<Integer>();
