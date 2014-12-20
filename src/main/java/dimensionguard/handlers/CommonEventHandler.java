@@ -32,7 +32,7 @@ public class CommonEventHandler
     {
         ArrayList<String> disabledItems = new ArrayList<String>();
         ArrayList<String> enabledItems = new ArrayList<String>();
-        for (int i=player.inventory.mainInventory.length;i<player.inventory.getSizeInventory();i++)
+        for (int i=0;i<player.inventory.getSizeInventory();i++)
         {
             ItemStack stack = player.inventory.getStackInSlot(i);
             if (stack==null || stack.getItem()==null) continue;
@@ -40,8 +40,9 @@ public class CommonEventHandler
             boolean wasDisabled = fromDim>Integer.MIN_VALUE? DisabledHandler.isDisabledStack(stack, fromDim):false;
             if (disabled!=wasDisabled)
             {
-                if (disabled) disabledItems.add(stack.getDisplayName());
-                else enabledItems.add(stack.getDisplayName());
+                String name = stack.getDisplayName();
+                if (disabled && !disabledItems.contains(name)) disabledItems.add(name);
+                else if (!disabled && !enabledItems.contains(name)) enabledItems.add(name);
             }
         }
         if (disabledItems.size()>0)
