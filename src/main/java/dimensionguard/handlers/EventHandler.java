@@ -29,12 +29,4 @@ public class EventHandler
 		if (DisabledHandler.isDisabledStack(event.entityPlayer)) event.setCanceled(true);
 	}
 
-	@SubscribeEvent
-	@SideOnly(Side.CLIENT)
-	public void loadTextures(TextureStitchEvent.Pre evt) {
-		if (evt.map.getTextureType() == 1) {
-			DisabledHandler.lockedIcon=evt.map.registerIcon("dimensionguard:lock");
-		}
-	}
-
 }

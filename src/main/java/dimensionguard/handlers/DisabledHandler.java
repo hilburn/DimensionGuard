@@ -6,8 +6,12 @@ import cpw.mods.fml.relauncher.ReflectionHelper;
 import dimensionguard.DimensionGuard;
 import dimensionguard.disabled.Disabled;
 import dimensionguard.utils.Logger;
+import net.minecraft.block.Block;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.RenderItem;
+import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.player.EntityPlayer;
@@ -15,6 +19,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IIcon;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import org.lwjgl.opengl.GL11;
 
@@ -32,7 +37,6 @@ public class DisabledHandler {
 	public static Map<Item,ArrayList<Disabled>> disabledItemHash = new HashMap<Item, ArrayList<Disabled>>();
 	public static Map<Class,ArrayList<Disabled>> disabledEntityHash = new HashMap<Class, ArrayList<Disabled>>();
 	public static RenderItem renderItem = new RenderItem();
-	public static IIcon lockedIcon;
 
 	DisabledHandler()
 	{
@@ -200,23 +204,27 @@ public class DisabledHandler {
 		return false;
 	}
 
+	private static ResourceLocation texture = new ResourceLocation("dimensionguard","textures/items/lock.png");
+
 	public static void disabledRender(RenderItem itemRender, ItemStack stack, int i, int j)
 	{
-		IIcon icon = lockedIcon;
+		Minecraft.getMinecraft().getTextureManager().bindTexture(texture);
 		GL11.glPushMatrix();
-		if (stack.getItem() instanceof ItemBlock)
-		{
-			//GL11.glScalef(0.1F,0.1F,0.1F);
 
-		}
-		GL11.glEnable(GL11.GL_BLEND);
+		if (!(stack.getItemSpriteNumber() == 0 && RenderBlocks.renderItemIn3d(Block.getBlockFromItem(stack.getItem()).getRenderType())))
+			GL11.glEnable(GL11.GL_BLEND);
+		GL11.glDisable(GL11.GL_LIGHTING);
+		GL11.glDisable(GL11.GL_DEPTH_TEST);
+		GL11.glColor4f(1.0F,1.0F,1.0F,1.0F);
 		Tessellator tessellator = Tessellator.instance;
 		tessellator.startDrawingQuads();
-		tessellator.addVertexWithUV((double)(i + 0), (double)(j + 16), 500F, (double)icon.getMinU(), (double)icon.getMaxV());
-		tessellator.addVertexWithUV((double)(i + 16), (double)(j + 16), 500F, (double)icon.getMaxU(), (double)icon.getMaxV());
-		tessellator.addVertexWithUV((double)(i + 16), (double)(j + 0), 500F, (double)icon.getMaxU(), (double)icon.getMinV());
-		tessellator.addVertexWithUV((double)(i + 0), (double)(j + 0), 500F, (double)icon.getMinU(), (double)icon.getMinV());
+		tessellator.addVertexWithUV((double)(i + 0), (double)(j + 16), 500F, 0, 1);
+		tessellator.addVertexWithUV((double)(i + 16), (double)(j + 16), 500F, 1, 1);
+		tessellator.addVertexWithUV((double)(i + 16), (double)(j + 0), 500F, 1, 0);
+		tessellator.addVertexWithUV((double)(i + 0), (double)(j + 0), 500F, 0, 0);
 		tessellator.draw();
+		GL11.glEnable(GL11.GL_LIGHTING);
+		GL11.glEnable(GL11.GL_DEPTH_TEST);
 		GL11.glDisable(GL11.GL_BLEND);
 		GL11.glPopMatrix();
 	}
