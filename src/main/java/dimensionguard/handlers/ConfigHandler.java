@@ -19,7 +19,6 @@ public class ConfigHandler {
 	public static ArrayList<String> whiteList;
 	public static ArrayList<String> entityBlacklist;
 	public static ArrayList<String> entityWhitelist;
-	public static boolean dropDisabledItems = true;
 	public static boolean creativeOverride;
 
 	public static void init(File file)
@@ -39,9 +38,9 @@ public class ConfigHandler {
 							+ 	"eg '*:*wool:*' selects every block with 'wool' in it's unlocalized name from any mod in every colour\n"
 							+ 	"Dimensions can be defined as single dimensions (0), ranges (0:5), and more than or less than (0++/1--)");
 
-		Property dropItems = config.get("blocks and items", "dropDisabledItems", dropDisabledItems);
-		dropItems.comment = "Should players drop any disabled items on death";
-		dropDisabledItems = dropItems.getBoolean();
+		Property dropItems = config.get("blocks and items", "creativeOverride", creativeOverride);
+		dropItems.comment = "Should players in creative be able to ignore the restrictions?";
+		creativeOverride = dropItems.getBoolean();
 
 		Property blacklistP = config.get("Blocks and Items", "blacklist", new String[] {});
 		blacklistP.comment = "Block and item identifiers and dimension(s) blacklisted - add each new element on a separate line.\n"
