@@ -2,12 +2,13 @@ package dimensionguard.handlers;
 
 import cpw.mods.fml.common.eventhandler.Event.Result;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import dimensionguard.handlers.DisabledHandler;
-import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+
 
 /**
  * DimensionGuard Mod
@@ -25,6 +26,13 @@ public class EventHandler
 
 	@SubscribeEvent
 	public void hitEntity(AttackEntityEvent event)
+	{
+		if (DisabledHandler.isDisabledStack(event.entityPlayer)) event.setCanceled(true);
+	}
+
+	@SideOnly(Side.SERVER)
+	@SubscribeEvent
+	public void onPlayerInteract(PlayerInteractEvent event)
 	{
 		if (DisabledHandler.isDisabledStack(event.entityPlayer)) event.setCanceled(true);
 	}

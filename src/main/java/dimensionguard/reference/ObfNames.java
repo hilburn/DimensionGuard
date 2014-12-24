@@ -5,6 +5,7 @@ import dimensionguard.asm.LoadingPlugin;
 public enum ObfNames
 {
     SEND_USE_ITEM("sendUseItem","func_78769_a","(Lnet/minecraft/entity/player/EntityPlayer;Lnet/minecraft/world/World;Lnet/minecraft/item/ItemStack;)Z"),
+    TRY_USE_ITEM("tryUseItem","func_73085_a","(Lnet/minecraft/entity/player/EntityPlayer;Lnet/minecraft/world/World;Lnet/minecraft/item/ItemStack;)Z"),
     ON_PLAYER_RIGHT_CLICK("onPlayerRightClick","func_78760_a","(Lnet/minecraft/entity/player/EntityPlayer;Lnet/minecraft/world/World;Lnet/minecraft/item/ItemStack;IIIILnet/minecraft/util/Vec3;)Z"),
     IS_VALID_ARMOR("isValidArmor","isValidArmor","(Lnet/minecraft/item/ItemStack;ILnet/minecraft/entity/Entity;)Z"),
     IS_VALID_ARMOUR("dimensionguard/handlers/DisabledHandler","dimensionguard/handlers/DisabledHandler","isValidArmour","(Lnet/minecraft/item/ItemStack;Lnet/minecraft/entity/Entity;)Z"),

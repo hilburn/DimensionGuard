@@ -3,9 +3,14 @@ package dimensionguard.handlers;
 import com.google.common.collect.Table;
 import cpw.mods.fml.common.registry.GameData;
 import cpw.mods.fml.relauncher.ReflectionHelper;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import dimensionguard.DimensionGuard;
 import dimensionguard.disabled.Disabled;
+import dimensionguard.reference.Names;
+import dimensionguard.server.PlayerRegistry;
 import dimensionguard.utils.Logger;
+import dimensionguard.utils.StackUtils;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.OpenGlHelper;
@@ -19,8 +24,10 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.IIcon;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
 import org.lwjgl.opengl.GL11;
 
@@ -37,12 +44,6 @@ import java.util.regex.Pattern;
 public class DisabledHandler {
 	public static Map<Item,ArrayList<Disabled>> disabledItemHash = new HashMap<Item, ArrayList<Disabled>>();
 	public static Map<Class,ArrayList<Disabled>> disabledEntityHash = new HashMap<Class, ArrayList<Disabled>>();
-	public static RenderItem renderItem = new RenderItem();
-
-	DisabledHandler()
-	{
-		renderItem.zLevel = 500.0F;
-	}
 
 	public static void init(){
 		ConfigHandler.init(DimensionGuard.config);
@@ -159,21 +160,27 @@ public class DisabledHandler {
 
 	public static boolean isDisabledStack(EntityPlayer player, ItemStack stack)
 	{
+
 		return isDisabledStack(player,player.worldObj.provider.dimensionId,stack);
 	}
 
 	public static boolean isDisabledStack(EntityPlayer player, World world, ItemStack stack)
 	{
-		return isDisabledStack(player,world.provider.dimensionId,stack);
+		boolean disabled = isDisabledStack(player,world.provider.dimensionId,stack);
+		if (disabled)
+		{
+			if (!(world.isRemote || PlayerRegistry.hasClient(player)))
+			{
+				player.addChatComponentMessage(new ChatComponentText(stack.getDisplayName() + " " + StatCollector.translateToLocal(Names.dimensionDisabled)));
+			}
+		}
+		return disabled;
 	}
 
 	public static boolean isDisabledStack(EntityPlayer player, int dim, ItemStack stack)
 	{
-		if (ConfigHandler.creativeOverride)
-		{
-			if (player.capabilities.isCreativeMode) return false;
-		}
-		return (isDisabledStack(stack, dim));
+		if (ConfigHandler.creativeOverride && player.capabilities.isCreativeMode) return false;
+		return isDisabledStack(stack, dim);
 	}
 
 	public static boolean isDisabledStack(ItemStack stack, int dim)
@@ -207,6 +214,7 @@ public class DisabledHandler {
 
 	private static ResourceLocation texture = new ResourceLocation("dimensionguard","textures/items/lock.png");
 
+	@SideOnly(Side.CLIENT)
 	public static void disabledRender(RenderItem itemRender, ItemStack stack, int i, int j)
 	{
 		Minecraft.getMinecraft().getTextureManager().bindTexture(texture);

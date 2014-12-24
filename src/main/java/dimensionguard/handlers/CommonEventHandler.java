@@ -2,9 +2,14 @@ package dimensionguard.handlers;
 
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.PlayerEvent;
+import cpw.mods.fml.common.network.FMLNetworkEvent;
 import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+import dimensionguard.network.MessageHandler;
+import dimensionguard.network.message.ClientMessage;
 import dimensionguard.reference.Names;
 import dimensionguard.utils.StackUtils;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ChatComponentText;
@@ -21,7 +26,25 @@ public class CommonEventHandler
         checkInventory(event.player, event.toDim, event.fromDim);
     }
 
+    @SideOnly(Side.CLIENT)
+    @SubscribeEvent
+    public void playerConnect(PlayerEvent.PlayerLoggedInEvent event)
+    {
+        sendMessage(new ClientMessage(event.player, true));
+    }
 
+    @SideOnly(Side.CLIENT)
+    @SubscribeEvent
+    public void playerDisconnect(PlayerEvent.PlayerLoggedOutEvent event)
+    {
+        sendMessage(new ClientMessage(event.player, false));
+    }
+
+
+    private void sendMessage(ClientMessage message)
+    {
+        MessageHandler.sendMessage(message);
+    }
 
     @SubscribeEvent
     public void respawnPlayer(PlayerEvent.PlayerRespawnEvent event){

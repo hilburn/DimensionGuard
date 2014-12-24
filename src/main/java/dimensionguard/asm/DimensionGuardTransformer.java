@@ -22,8 +22,8 @@ public class DimensionGuardTransformer implements IClassTransformer
         INGAME("net.minecraft.client.gui.GuiIngame","bbv", ObfNames.RENDER_INVENTORY_SLOT),
         CONTAINER("net.minecraft.client.gui.inventory.GuiContainer","bex",ObfNames.DRAW_ITEM_STACK,ObfNames.RENDER_SLOT),
         ITEM("net.minecraft.item.Item","adb",ObfNames.IS_VALID_ARMOR),
-        PLAYER_CONTROLLER_MP("net.minecraft.client.multiplayer.PlayerControllerMP","bje",ObfNames.ON_PLAYER_RIGHT_CLICK, ObfNames.SEND_USE_ITEM);
-        //ITEM_WORLD_MANAGER("net.minecraft.server.management.ItemInWorldManager","mx", ObfNames.TRY_USE_ITEM);
+        PLAYER_CONTROLLER_MP("net.minecraft.client.multiplayer.PlayerControllerMP","bje",ObfNames.ON_PLAYER_RIGHT_CLICK, ObfNames.SEND_USE_ITEM),
+        ITEM_WORLD_MANAGER("net.minecraft.server.management.ItemInWorldManager","mx",ObfNames.TRY_USE_ITEM);
 
         private String deObf;
         private String obf;
@@ -72,6 +72,7 @@ public class DimensionGuardTransformer implements IClassTransformer
         {
             switch (clazz)
             {
+                case ITEM_WORLD_MANAGER:
                 case PLAYER_CONTROLLER_MP:
                     bytes= insertDisabledCheck(clazz, bytes);
                     break;
