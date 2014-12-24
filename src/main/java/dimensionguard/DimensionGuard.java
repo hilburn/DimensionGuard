@@ -14,7 +14,6 @@ import cpw.mods.fml.relauncher.Side;
 import dimensionguard.handlers.EventHandler;
 import dimensionguard.handlers.CommonEventHandler;
 import dimensionguard.handlers.DisabledHandler;
-import dimensionguard.network.MessageHandler;
 import dimensionguard.reference.Metadata;
 import dimensionguard.reference.Reference;
 import net.minecraftforge.common.MinecraftForge;
@@ -42,7 +41,6 @@ public class DimensionGuard {
 	public void preInit(FMLPreInitializationEvent event){
 		config=event.getSuggestedConfigurationFile();
 		metadata = Metadata.init(metadata);
-		MessageHandler.init();
 	}
 
 	@NetworkCheckHandler

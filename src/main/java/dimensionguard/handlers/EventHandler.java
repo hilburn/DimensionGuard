@@ -7,6 +7,7 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
+import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 
 
@@ -35,6 +36,13 @@ public class EventHandler
 	public void onPlayerInteract(PlayerInteractEvent event)
 	{
 		if (DisabledHandler.isDisabledStack(event.entityPlayer)) event.setCanceled(true);
+	}
+
+	@SideOnly(Side.SERVER)
+	@SubscribeEvent
+	public void onPlayerLoad(PlayerEvent.LoadFromFile event)
+	{
+		CommonEventHandler.checkInventory(event.entityPlayer, event.entity.worldObj.provider.dimensionId, Integer.MIN_VALUE);
 	}
 
 }

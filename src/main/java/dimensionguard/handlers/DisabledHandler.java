@@ -8,24 +8,19 @@ import cpw.mods.fml.relauncher.SideOnly;
 import dimensionguard.DimensionGuard;
 import dimensionguard.disabled.Disabled;
 import dimensionguard.reference.Names;
-import dimensionguard.server.PlayerRegistry;
 import dimensionguard.utils.Logger;
-import dimensionguard.utils.StackUtils;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.RenderItem;
-import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ChatComponentText;
-import net.minecraft.util.IIcon;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
@@ -169,7 +164,7 @@ public class DisabledHandler {
 		boolean disabled = isDisabledStack(player,world.provider.dimensionId,stack);
 		if (disabled)
 		{
-			if (!(world.isRemote || PlayerRegistry.hasClient(player)))
+			if (!world.isRemote)
 			{
 				player.addChatComponentMessage(new ChatComponentText(stack.getDisplayName() + " " + StatCollector.translateToLocal(Names.dimensionDisabled)));
 			}

@@ -2,21 +2,14 @@ package dimensionguard.handlers;
 
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.PlayerEvent;
-import cpw.mods.fml.common.network.FMLNetworkEvent;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-import dimensionguard.network.MessageHandler;
-import dimensionguard.network.message.ClientMessage;
 import dimensionguard.reference.Names;
 import dimensionguard.utils.StackUtils;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.StatCollector;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class CommonEventHandler
 {
@@ -26,32 +19,12 @@ public class CommonEventHandler
         checkInventory(event.player, event.toDim, event.fromDim);
     }
 
-    @SideOnly(Side.CLIENT)
-    @SubscribeEvent
-    public void playerConnect(PlayerEvent.PlayerLoggedInEvent event)
-    {
-        sendMessage(new ClientMessage(event.player, true));
-    }
-
-    @SideOnly(Side.CLIENT)
-    @SubscribeEvent
-    public void playerDisconnect(PlayerEvent.PlayerLoggedOutEvent event)
-    {
-        sendMessage(new ClientMessage(event.player, false));
-    }
-
-
-    private void sendMessage(ClientMessage message)
-    {
-        MessageHandler.sendMessage(message);
-    }
-
     @SubscribeEvent
     public void respawnPlayer(PlayerEvent.PlayerRespawnEvent event){
     	checkInventory(event.player, event.player.dimension, Integer.MIN_VALUE);
     }
 
-    private void checkInventory(EntityPlayer player, int dim, int fromDim)
+    public static void checkInventory(EntityPlayer player, int dim, int fromDim)
     {
         ArrayList<String> disabledItems = new ArrayList<String>();
         ArrayList<String> enabledItems = new ArrayList<String>();
@@ -75,7 +48,7 @@ public class CommonEventHandler
         disableArmour(player,dim);
     }
 
-    public void disableArmour(EntityPlayer player, int dim)
+    public static void disableArmour(EntityPlayer player, int dim)
     {
         for (int i=player.inventory.mainInventory.length;i<player.inventory.getSizeInventory();i++)
         {
