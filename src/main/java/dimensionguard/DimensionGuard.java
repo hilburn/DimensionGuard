@@ -1,4 +1,3 @@
-
 package dimensionguard;
 
 import cpw.mods.fml.common.FMLCommonHandler;
