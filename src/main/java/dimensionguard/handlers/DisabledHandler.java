@@ -48,7 +48,7 @@ public class DisabledHandler {
 
 		for (Table.Cell<String, String,ItemStack> cell: customStacks.cellSet())
 		{
-			customItemStacks.put(cell.getColumnKey()+":"+cell.getRowKey(),cell.getValue());
+			customItemStacks.put(cell.getRowKey()+":"+cell.getColumnKey(),cell.getValue());
 		}
 
 		addDisabledItems(true, customItemStacks);
@@ -79,6 +79,8 @@ public class DisabledHandler {
 
 			ArrayList<Item> matches = new ArrayList<Item>();
 			if (itemID.contains("*"))itemID=itemID.replaceAll("\\*", ".*");
+			if (itemID.contains("|"))
+				itemID=itemID.replaceAll("\\|", "\\\\|");
 			Pattern blockPattern = Pattern.compile(itemID,Pattern.CASE_INSENSITIVE);
 			Disabled newDisabled = new Disabled(damage,dimensions,blacklist);
 
