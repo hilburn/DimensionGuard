@@ -44,10 +44,9 @@ public class DimensionGuard {
 
 	@NetworkCheckHandler
 	public final boolean networkCheck(Map<String, String> remoteVersions, Side side)
-	{
-		if (side.isClient()) return true;
-		else return remoteVersions.containsKey(Reference.ID);
-	}
+    {
+        return side.isClient() || remoteVersions.containsKey(Reference.ID);
+    }
 	
 	@Mod.EventHandler
 	public void init(FMLInitializationEvent event){

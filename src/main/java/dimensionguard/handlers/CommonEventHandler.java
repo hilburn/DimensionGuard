@@ -33,7 +33,7 @@ public class CommonEventHandler
             ItemStack stack = player.inventory.getStackInSlot(i);
             if (stack==null || stack.getItem()==null) continue;
             boolean disabled = DisabledHandler.isDisabledStack(stack, dim);
-            boolean wasDisabled = fromDim>Integer.MIN_VALUE? DisabledHandler.isDisabledStack(stack, fromDim):false;
+            boolean wasDisabled = fromDim > Integer.MIN_VALUE && DisabledHandler.isDisabledStack(stack, fromDim);
             if (disabled!=wasDisabled)
             {
                 String name = stack.getDisplayName();
@@ -41,10 +41,13 @@ public class CommonEventHandler
                 else if (!disabled && !enabledItems.contains(name)) enabledItems.add(name);
             }
         }
-        if (disabledItems.size()>0)
-            player.addChatComponentMessage(new ChatComponentText(StatCollector.translateToLocal(Names.disabled)+ ": "+StackUtils.getConcatString(disabledItems)));
-        if (enabledItems.size()>0)
-            player.addChatComponentMessage(new ChatComponentText(StatCollector.translateToLocal(Names.enabled)+ ": "+StackUtils.getConcatString(enabledItems)));
+        try
+        {
+            if (disabledItems.size() > 0)
+                player.addChatComponentMessage(new ChatComponentText(StatCollector.translateToLocal(Names.disabled) + ": " + StackUtils.getConcatString(disabledItems)));
+            if (enabledItems.size() > 0)
+                player.addChatComponentMessage(new ChatComponentText(StatCollector.translateToLocal(Names.enabled) + ": " + StackUtils.getConcatString(enabledItems)));
+        }catch (Exception ignore){}
         disableArmour(player,dim);
     }
 

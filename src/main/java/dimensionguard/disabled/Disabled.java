@@ -65,7 +65,7 @@ public class Disabled
 	private int safeParseInt(String s){
 		try{
 			return Integer.parseInt(s.trim());
-		}catch(NumberFormatException nfe) {};
+		}catch(NumberFormatException ignored) {}
 		return Integer.MIN_VALUE;
 	}
 	
@@ -76,9 +76,9 @@ public class Disabled
 	
 	public boolean dimensionMatch(int dim){
 		for (int i=0;i<dimensions.size();i+=2){
-			if (dimensions.get(i)<=dim && dim<=dimensions.get(i+1)) return !(true^blacklist);
+			if (dimensions.get(i)<=dim && dim<=dimensions.get(i+1)) return blacklist;
 		}
-		return !(false^blacklist);
+		return !blacklist;
 	}
 
 	public boolean isDisabled(int damage, int dim){
@@ -86,9 +86,8 @@ public class Disabled
 	}
 
 	public boolean damageMatch(int damage){
-		if (this.damage ==-1|| this.damage ==damage)return true;
-		return false;
-	}
+        return this.damage == -1 || this.damage == damage;
+    }
 	
 	public Item getItem(){return item;}
 	public int getDamage(){return damage;}
